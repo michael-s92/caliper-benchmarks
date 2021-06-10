@@ -16,29 +16,41 @@
 
 'use strict';
 
-module.exports.info = 'doNothing notarization';
+module.exports.info  = 'doNothing notarization';
 
 let txIndex = 0;
 let bc, contx;
 
-module.exports.init = function (blockchain, context, args) {
+module.exports.init = function(blockchain, context, args) {
     bc = blockchain;
     contx = context;
 
     return Promise.resolve();
 };
 
-module.exports.run = function () {
+module.exports.run = function() {
     txIndex++;
 
-    let args = {
-        chaincodeFunction: 'doNothing',
-        chaincodeArguments: [],
-    };
+    let args;
+    console.log("before if");
+    if (bc.bcType === 'fabric-ccp') {
+        console.log("true if");
+
+        args = {
+            chaincodeFunction: 'doNothing',
+            chaincodeArguments: [],
+        };
+    } else {
+        console.log("false if");
+
+        args = {
+            verb: 'doNothing'
+        };
+    }
 
     return bc.invokeSmartContract(contx, 'notarization', 'v1', args, 30);
 };
 
-module.exports.end = function () {
+module.exports.end = function() {
     return Promise.resolve();
 };
