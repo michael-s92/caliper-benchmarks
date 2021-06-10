@@ -7,17 +7,6 @@ test:
     type: local
     number: 1
   rounds:
-    
-  - label: open
-    description: Test description for the opening of an account through the deployed chaincode
-    txNumber: 100
-    rateControl:
-      type: fixed-rate
-      opts:
-        tps: 50
-    arguments:
-      money: 10000
-    callback: benchmarks/masterBenchmark/simple/open.js
 
   - label: readBlockchain
     txNumber: 1
