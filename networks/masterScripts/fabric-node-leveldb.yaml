@@ -73,7 +73,7 @@ channels:
 
     chaincodes:
     - id: notarization
-      version: v0
+      version: v1
       language: node
       path: src/masterCC/notarization
       metadataPath: src/masterCC/notarization/metadata
