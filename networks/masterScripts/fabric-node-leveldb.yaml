@@ -77,11 +77,6 @@ channels:
       language: node
       path: src/masterCC/notarization
       metadataPath: src/masterCC/notarization/metadata
-    - id: simple
-      version: v0
-      language: node
-      path: src/fabric/scenario/simple/node
-    
 
 organizations:
   Org1:
