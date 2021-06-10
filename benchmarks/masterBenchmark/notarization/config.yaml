@@ -8,7 +8,7 @@ test:
     number: 1
   rounds:
 
-  - label: readBlockchainIf
+  - label: readBlockchain
     txNumber: 1
     rateControl:
       type: fixed-rate
@@ -16,13 +16,6 @@ test:
         tps: 1
     callback: benchmarks/masterBenchmark/notarization/doNothing.js
 
-  - label: readBlockchain
-    txNumber: 1
-    rateControl:
-      type: fixed-rate
-      opts:
-        tps: 1
-    callback: benchmarks/masterBenchmark/notarization/doNothingNoIf.js
 
 monitor:
   type:
