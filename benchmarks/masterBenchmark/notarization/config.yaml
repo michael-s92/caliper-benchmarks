@@ -22,7 +22,7 @@ test:
 #        tps: 25
 #    callback: benchmarks/masterBenchmark/notarization/common.js
 
-  label: readBlockchain
+  - label: readBlockchain
     txNumber: 1
     rateControl:
       type: fixed-rate
