@@ -38,7 +38,7 @@ test:
   - label: readBlockchain
     txNumber: 1
     rateControl:
-    - type: fixed-rate
+      type: fixed-rate
       opts:
         tps: 1
     callback: benchmarks/masterBenchmark/simple/doNothing.js
