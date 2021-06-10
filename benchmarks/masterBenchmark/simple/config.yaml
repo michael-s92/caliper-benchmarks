@@ -7,6 +7,7 @@ test:
     type: local
     number: 1
   rounds:
+    
   - label: open
     description: Test description for the opening of an account through the deployed chaincode
     txNumber: 100
@@ -17,24 +18,7 @@ test:
     arguments:
       money: 10000
     callback: benchmarks/masterBenchmark/simple/open.js
-  - label: query
-    description: Test description for the query performance of the deployed chaincode
-    txNumber: 100
-    rateControl:
-      type: fixed-rate
-      opts:
-        tps: 100
-    callback: benchmarks/masterBenchmark/simple/query.js
-  - label: transfer
-    description: Test description for transfering money between accounts
-    txNumber: 100
-    rateControl:
-          type: fixed-rate
-          opts:
-              tps: 50
-    arguments:
-        money: 100
-    callback: benchmarks/masterBenchmark/simple/transfer.js
+
   - label: readBlockchain
     txNumber: 1
     rateControl:
@@ -42,6 +26,7 @@ test:
       opts:
         tps: 1
     callback: benchmarks/masterBenchmark/simple/doNothing.js
+
 monitor:
   type:
   - docker
