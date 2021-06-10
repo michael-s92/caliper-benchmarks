@@ -10,32 +10,31 @@ class getDocumentValue {
 
         // select random reader
         let randomAccessKey = 0;
-        do {
+        do{
             randomAccessKey = utils.getRandomInt(seeds.allReader.length);
-        } while (seeds.allReader[randomAccessKey] === undefined);
+        } while(seeds.allReader[randomAccessKey] === undefined);
 
-        let reader = seeds.allReader[randomAccessKey];
+        let reader = seeds.allReader[randomAccessKey];      
 
-
-        // select random document from initDocuments
+        
+        // select random documentKey
         randomAccessKey = 0;
-        do {
+        do{
             randomAccessKey = utils.getRandomInt(seeds.initDocuments.length);
-        } while (seeds.initDocuments[randomAccessKey] === undefined);
+        } while(seeds.initDocuments[randomAccessKey] === undefined);
 
         let doc = seeds.initDocuments[randomAccessKey];
 
-        // getDocumentValue(ctx, custodianId, studentId, readerName)
+        // getDocumentValue(ctx, documentKey, readerName)
 
         let args = {
-            chaincodeFunction: 'getDocumentValue',
-            chaincodeArguments: [doc.custodian.id, doc.student.id, reader]
-        };
+                chaincodeFunction: 'getDocumentValue',
+                chaincodeArguments: [doc.documentId, reader]
+            };
 
+	    return args;
 
-        return args;
-
-    }
+	}
 }
 
 module.exports = getDocumentValue;

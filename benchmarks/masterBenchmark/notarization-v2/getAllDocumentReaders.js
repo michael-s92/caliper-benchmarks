@@ -4,7 +4,7 @@
 const utils = require('./utils');
 const seeds = require('./seeds.json');
 
-class revokeDocument {
+class getAllDocumentReaders {
 
     static get() {
 
@@ -16,16 +16,17 @@ class revokeDocument {
 
         let doc = seeds.initDocuments[randomAccessKey];
 
-        // revokeDocument(ctx, custodianId, studentId, custodianKey)
+        // getAllDocumentReaders(ctx, documentKey, studentKey)
 
         let args = {
-            chaincodeFunction: 'revokeDocument',
-            chaincodeArguments: [doc.custodian.id, doc.student.id, doc.custodian.key]
+            chaincodeFunction: 'getAllDocumentReaders',
+            chaincodeArguments: [doc.documentId, doc.student.key]
         };
+
 
         return args;
 
     }
 }
 
-module.exports = revokeDocument;
+module.exports = getAllDocumentReaders;

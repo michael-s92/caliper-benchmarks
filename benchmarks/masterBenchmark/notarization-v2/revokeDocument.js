@@ -16,12 +16,13 @@ class revokeDocument {
 
         let doc = seeds.initDocuments[randomAccessKey];
 
-        // revokeDocument(ctx, custodianId, studentId, custodianKey)
+        // revokeDocument(ctx, documentKey, custodianKey) 
 
         let args = {
             chaincodeFunction: 'revokeDocument',
-            chaincodeArguments: [doc.custodian.id, doc.student.id, doc.custodian.key]
+            chaincodeArguments: [doc.documentId, doc.custodian.key]
         };
+
 
         return args;
 

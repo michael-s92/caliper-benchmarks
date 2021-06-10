@@ -16,7 +16,7 @@
 
 'use strict';
 
-module.exports.info = 'doNothing notarization';
+module.exports.info = 'Initializing Notarization.';
 
 let txIndex = 0;
 let bc, contx;
@@ -32,11 +32,11 @@ module.exports.run = function () {
     txIndex++;
 
     let args = {
-        chaincodeFunction: 'doNothing',
+        chaincodeFunction: 'initLedger',
         chaincodeArguments: [],
     };
 
-    return bc.invokeSmartContract(contx, 'notarization', 'v1', args, 30);
+    return bc.invokeSmartContract(contx, 'notarization-v2', 'v1', args, 30);
 };
 
 module.exports.end = function () {

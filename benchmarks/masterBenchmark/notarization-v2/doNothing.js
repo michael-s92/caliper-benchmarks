@@ -36,7 +36,7 @@ module.exports.run = function () {
         chaincodeArguments: [],
     };
 
-    return bc.invokeSmartContract(contx, 'notarization', 'v1', args, 30);
+    return bc.invokeSmartContract(contx, 'notarization-v2', 'v1', args, 30);
 };
 
 module.exports.end = function () {

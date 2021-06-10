@@ -7,7 +7,6 @@ const seeds = require('./seeds.json');
 class getAllDocumentReaders {
 
     static get() {
-        let args;
 
         // select random document from initLedgerDocuments
         let randomAccessKey = 0;
@@ -19,7 +18,7 @@ class getAllDocumentReaders {
 
         // getAllDocumentReaders(ctx, custodianId, studentId, studentKey)
 
-        args = {
+        let args = {
             chaincodeFunction: 'getAllDocumentReaders',
             chaincodeArguments: [doc.custodian.id, doc.student.id, doc.student.key]
         };

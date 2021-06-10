@@ -9,12 +9,14 @@ class addDocument {
     static get() {
 
         let randomAccessKey = 0;
+        let docs = seeds.benchmarkDocuments;
 
         do{
-            randomAccessKey = utils.getRandomInt(seeds.benchmarkDocuments.length);
-        } while(seeds.benchmarkDocuments[randomAccessKey] === undefined);
+            randomAccessKey = utils.getRandomInt(docs.length);
+        } while(docs[randomAccessKey] === undefined);
 
-        let doc = seeds.benchmarkDocuments[randomAccessKey];
+        let doc = docs[randomAccessKey];
+
 
         // addDocument(ctx, documentHash, custodianId, custodianKey, studentId, studentKey)
 

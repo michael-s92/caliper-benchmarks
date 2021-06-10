@@ -1,0 +1,38 @@
+---
+test:
+  workers:
+    type: local
+    number: 1
+
+  rounds:
+  - label: initLedger
+    txNumber: 1             
+    rateControl:
+      type: fixed-rate
+      opts:
+        tps: 1
+    callback: benchmarks/masterBenchmark/notarization-v2/initLedger.js
+
+  - label: common
+    txDuration: 180
+    rateControl:
+      type: fixed-rate
+      opts:
+        tps: 25
+    callback: benchmarks/masterBenchmark/notarization-v2/common.js
+
+  - label: readBlockchain
+    txNumber: 1
+    rateControl:
+      type: fixed-rate
+      opts:
+        tps: 1
+    callback: benchmarks/masterBenchmark/notarization-v2/doNothing.js
+
+monitor:
+  type:
+  - docker
+  docker:
+    name:
+    - all
+  interval: 1
