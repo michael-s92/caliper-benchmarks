@@ -77,6 +77,10 @@ channels:
       language: node
       path: src/masterCC/notarization
       metadataPath: src/masterCC/notarization/metadata
+    - id: covid-passport
+      version: v1
+      language: golang
+      path: src/masterCC/covid-passport
 
 organizations:
   Org1:
