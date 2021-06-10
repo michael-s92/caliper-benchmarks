@@ -21,7 +21,7 @@ test:
     rateControl:
       type: fixed-rate
       opts:
-        tps: 5
+        tps: 10
     callback: benchmarks/masterBenchmark/notarization/common.js
 
   - label: readBlockchain

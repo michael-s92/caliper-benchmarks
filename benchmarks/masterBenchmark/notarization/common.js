@@ -49,7 +49,7 @@ module.exports.init = function (blockchain, context, args) {
 };
 module.exports.run = function () {
 
-        const testPick = 0; //pick(testCasePermuationWeighted);
+        const testPick = pick(testCasePermuationWeighted);
 
         //let testPick = deck.pick(testCasePermuation); //uniformPick
         //console.info('--------------------------- TRANSACTION TO BE INVOKED: ' + ALLTESTCASE[testPick]);
