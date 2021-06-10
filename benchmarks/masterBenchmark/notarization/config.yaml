@@ -16,6 +16,13 @@ test:
         tps: 1
     callback: benchmarks/masterBenchmark/notarization/initLedger.js
 
+  - label: common
+    txDuration: 10 #180
+    rateControl:
+      type: fixed-rate
+      opts:
+        tps: 5
+    callback: benchmarks/masterBenchmark/notarization/common.js
 
   - label: readBlockchain
     txNumber: 1
