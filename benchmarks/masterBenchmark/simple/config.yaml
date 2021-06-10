@@ -36,8 +36,7 @@ test:
         money: 100
     callback: benchmarks/scenario/simple/transfer.js
   - label: readBlockchain
-    txNumber:
-    - 1
+    txNumber: 1
     rateControl:
     - type: fixed-rate
       opts:
