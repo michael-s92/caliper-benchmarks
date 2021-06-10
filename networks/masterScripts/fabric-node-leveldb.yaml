@@ -77,11 +77,6 @@ channels:
       language: node
       path: src/masterCC/notarization
       metadataPath: src/masterCC/notarization/metadata
-    - id: marbles
-      version: v0
-      language: node
-      path: src/fabric/samples/marbles/node
-      metadataPath: src/fabric/samples/marbles/node/metadata
     - id: simple
       version: v0
       language: node

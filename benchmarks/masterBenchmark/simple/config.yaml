@@ -35,6 +35,14 @@ test:
     arguments:
         money: 100
     callback: benchmarks/scenario/simple/transfer.js
+  - label: readBlockchain
+    txNumber:
+    - 1
+    rateControl:
+    - type: fixed-rate
+      opts:
+        tps: 1
+    callback: benchmarks/masterBenchmark/simple/doNothing.js
 monitor:
   type:
   - docker
