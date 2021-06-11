@@ -77,6 +77,11 @@ channels:
       language: node
       path: src/masterCC/notarization-v2
       metadataPath: src/masterCC/notarization-v2/metadata
+    - id: iotsupplychain
+      version: v1
+      language: node
+      path: src/masterCC/iotsupplychain
+      metadataPath: src/masterCC/iotsupplychain/metadata
 
 organizations:
   Org1:
