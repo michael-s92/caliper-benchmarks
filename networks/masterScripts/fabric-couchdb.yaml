@@ -85,8 +85,12 @@ channels:
     - id: eureka
       version: v1
       language: node
-      path: src/masterCC/eureka
-      metadataPath: src/masterCC/eureka/metadata
+      path: src/masterCC/eureka/node
+      metadataPath: src/masterCC/eureka/node/metadata
+#    - id: eureka
+#      version: v1
+#      language: java
+#      path: src/masterCC/eureka/java
 
 organizations:
   Org1:
