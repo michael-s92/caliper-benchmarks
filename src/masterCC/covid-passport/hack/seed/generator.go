@@ -20,7 +20,14 @@ type SeedParameters struct {
 }
 
 func generateValidDhp(ix int) (*cp.Dhp, error) {
-	tfId := rand.Intn(len(cp.TfKeys))
+	var tfId string
+	r := rand.Intn(len(cp.TfKeys))
+	for k := range cp.TfKeys {
+		if r == 0 {
+			tfId = k
+		}
+		r--
+	}
 	tfKey, err := cp.UnmarshalPrivateKey(cp.TfKeys[tfId])
 	if err != nil {
 		return nil, fmt.Errorf("Error unmarshaling private key: %w", err)
@@ -30,7 +37,7 @@ func generateValidDhp(ix int) (*cp.Dhp, error) {
 	// fmt.Printf("PatientDID: %s", patientDid)
 	// fmt.Printf("SHA256(PatientDID: %s", (ccrypto.Hash([]byte(patientDid))))
 
-	return cp.GenerateDhp(strconv.Itoa(ix), strconv.Itoa(tfId), tfKey, patientDid,
+	return cp.GenerateDhp(strconv.Itoa(ix), tfId, tfKey, patientDid,
 		TestTypes[rand.Intn(len(TestTypes))], rand.Intn(1) == 1,
 		time.Now().AddDate(0, 0, -1).Truncate(24*time.Hour),
 		time.Now().AddDate(0, 0, 2).Truncate(24*time.Hour),

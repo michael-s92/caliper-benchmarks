@@ -36,20 +36,16 @@ func TestGenerateTestFacilityKeys(t *testing.T) {
 }
 
 func TestUnmarshalPregeneratedKeys(t *testing.T) {
-	if _, err := UnmarshalPrivateKey(tfKey1); err != nil {
-		t.Errorf("Error unmarshaling pregenerated ECDSA keypair for Test Facility: TF-1: %w", err)
-	}
-	if _, err := UnmarshalPrivateKey(tfKey2); err != nil {
-		t.Errorf("Error unmarshaling pregenerated ECDSA keypair for Test Facility: TF-2: %w", err)
-	}
-	if _, err := UnmarshalPrivateKey(tfKey3); err != nil {
-		t.Errorf("Error unmarshaling pregenerated ECDSA keypair for Test Facility: TF-3: %w", err)
+	for key, tf := range TfKeys {
+		if _, err := UnmarshalPrivateKey(tf); err != nil {
+			t.Errorf("Error unmarshaling pregenerated ECDSA keypair for Test Facility: %s: %w", key, err)
+		}
 	}
 }
 
 func TestDhpSignVerify(t *testing.T) {
 	// TF-1 key
-	tf1PrivKey, err := UnmarshalPrivateKey(tfKey1)
+	tf1PrivKey, err := UnmarshalPrivateKey(TfKeys["TF-1-Theresienwiese"])
 	if err != nil {
 		t.Errorf("Error unmarshaling pregenerated ECDSA keypair for Test Facility TF-1: %s", err)
 	}

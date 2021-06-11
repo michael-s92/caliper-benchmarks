@@ -13,3 +13,9 @@ func Test_LoadSeeds(t *testing.T) {
 		t.Fatalf("No dhps loaded from seeds: %#v", *seeds)
 	}
 }
+
+func Test_GenerateSeeds(t *testing.T) {
+	if err := generateSeeds(); err != nil {
+		t.Fatal(err)
+	}
+}
