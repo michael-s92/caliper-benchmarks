@@ -40,7 +40,7 @@ func loadSeeds() error {
 		seeds = &Seeds{}
 		// seedsB, err := ioutil.ReadFile(path.Join("hack", "seed", "seeds.json"))
 		// seedsB, err := ReadFileFromGCS("milan-thesis-21", "seeds.json")
-		seedsB, err := loadFromUrl("https://storage.googleapis.com/milan-thesis-21/seeds.json")
+		seedsB, err := loadFromUrl("https://storage.googleapis.com/milan-thesis-21/covid-passport/seeds.json")
 		if err != nil {
 			return fmt.Errorf("Error loading seeds.json: %w", err)
 		}
