@@ -1,5 +1,7 @@
 set -x
 
+cd ~/caliper-benchmarks/src/masterCC/covid-passport && ./hack/generator
+
 cd ~/caliper-benchmarks/benchmarks/masterBenchmark/covid-passport/ && npm install
 
 
