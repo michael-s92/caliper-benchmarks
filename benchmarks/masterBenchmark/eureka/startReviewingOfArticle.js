@@ -3,7 +3,7 @@
 
 const utils = require('./utils');
 const seeds = require('./seeds.json');
-const Utils = require('../../src/contract/eureka/lib/utils');
+const Utils = require('./utils');
 
 class startReviewingOfArticle {
 
