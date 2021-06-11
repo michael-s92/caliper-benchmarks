@@ -23,7 +23,7 @@ func SeedRandomValidDhp() (Dhp, error) {
 
 func loadSeeds() error {
 	if seeds == nil {
-		seedsB, err := ioutil.ReadFile(path.Join("hack", "seed", "seeds.json"))
+		seedsB, err := ioutil.ReadFile(path.Join("/home/ubuntu/caliper-benchmarks/src/masterCC/covid-passport", "hack", "seed", "seeds.json"))
 		if err != nil {
 			return fmt.Errorf("Error loading seeds.json: %w", err)
 		}
