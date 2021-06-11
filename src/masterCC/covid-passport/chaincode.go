@@ -1,4 +1,4 @@
-package chaincode
+package main
 
 import (
 	"crypto/ecdsa"
@@ -9,8 +9,6 @@ import (
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
-
-	ccrypto "github.com/michael-s92/HyperLedgerLab/inventory/blockchain/src/contract/covid-passport/pkg/crypto"
 )
 
 type CovidPassportChaincode struct {
@@ -45,9 +43,9 @@ type TestResult struct {
 // Dhp is a Digital Health Passport consisting of
 // a verified test result and the corresponding signature from the test facility
 type Dhp struct {
-	Id        string            `json:"id"`        // Unique identifier per DHP
-	Data      TestResult        `json:"data"`      // The container for the actual test result
-	Signature ccrypto.Signature `json:"signature"` // Signature of the test result container signed by the test facility
+	Id        string     `json:"id"`        // Unique identifier per DHP
+	Data      TestResult `json:"data"`      // The container for the actual test result
+	Signature Signature  `json:"signature"` // Signature of the test result container signed by the test facility
 }
 
 // Init initializes chaincode
@@ -115,7 +113,7 @@ func (c *CovidPassportChaincode) UploadDhp(stub shim.ChaincodeStubInterface, arg
 	if issCrtB == nil {
 		return shim.Error(fmt.Sprintf("Issuer certificate for TestFacilityId %s is nil", dhp.Data.TestFacilityId))
 	}
-	issuerCert, err := ccrypto.UnmarshalPublicKey(string(issCrtB))
+	issuerCert, err := UnmarshalPublicKey(string(issCrtB))
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Error unmarshaling IssuerCert: %s", err))
 	}
@@ -125,7 +123,7 @@ func (c *CovidPassportChaincode) UploadDhp(stub shim.ChaincodeStubInterface, arg
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Error marshaling TestResult data inside DHP: %s", err))
 	}
-	if !ccrypto.ValidateSignature(data, dhp.Signature, issuerCert) {
+	if !ValidateSignature(data, dhp.Signature, issuerCert) {
 		return shim.Error(fmt.Sprintf("Signature validation failed! \n Issuer: %#v \n Signature: %#v \n TestResult: %#v \n\n Date: %s \n ExpiryDate: %s", *issuerCert, dhp.Signature, data, dhp.Data.Date, dhp.Data.ExpiryDate))
 	}
 

@@ -1,4 +1,4 @@
-package chaincode
+package main
 
 import (
 	"crypto/ecdsa"
@@ -8,16 +8,14 @@ import (
 	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-
-	crypto "github.com/michael-s92/HyperLedgerLab/inventory/blockchain/src/contract/covid-passport/pkg/crypto"
 )
 
 func GenerateTestFacility(stub shim.ChaincodeStubInterface, id, privateKey string) error {
-	privKey, err := crypto.UnmarshalPrivateKey(privateKey)
+	privKey, err := UnmarshalPrivateKey(privateKey)
 	if err != nil {
 		return fmt.Errorf("Error unmarshaling pregenerated ECDSA keypair for Test Facility: %s: %w", id, err)
 	}
-	publicKeyStr, err := crypto.MarshalPublicKey(&privKey.PublicKey)
+	publicKeyStr, err := MarshalPublicKey(&privKey.PublicKey)
 	if err != nil {
 		return fmt.Errorf("Error marshaling ECDSA public key for Test Facility: %s: %w", id, err)
 	}
@@ -33,7 +31,7 @@ func GenerateDhp(dhpId, testFacilityId string, testFacilityPrivateKey *ecdsa.Pri
 
 	testResult := TestResult{
 		TestFacilityId: testFacilityId,
-		Patient:        IdHash(crypto.Hash([]byte(patientDid))),
+		Patient:        IdHash(Hash([]byte(patientDid))),
 		Method:         TestType(method),
 		Result:         result,
 		Date:           date,
@@ -43,7 +41,7 @@ func GenerateDhp(dhpId, testFacilityId string, testFacilityPrivateKey *ecdsa.Pri
 	if err != nil {
 		return nil, fmt.Errorf("Error marshaling test result for patient %s at test facility %s: %w", patientDid, testFacilityId, err)
 	}
-	r, s, err := ecdsa.Sign(rand.Reader, testFacilityPrivateKey, crypto.Hash(testResultB))
+	r, s, err := ecdsa.Sign(rand.Reader, testFacilityPrivateKey, Hash(testResultB))
 	if err != nil {
 		return nil, fmt.Errorf("Error generating test result signature for patient %s at test facility %s: %w", patientDid, testFacilityId, err)
 	}
@@ -51,7 +49,7 @@ func GenerateDhp(dhpId, testFacilityId string, testFacilityPrivateKey *ecdsa.Pri
 	return &Dhp{
 		Id:   fmt.Sprintf("%s-%s-%s", testFacilityId, patientDid, dhpId),
 		Data: testResult,
-		Signature: crypto.Signature{
+		Signature: Signature{
 			R: r,
 			S: s,
 		},
