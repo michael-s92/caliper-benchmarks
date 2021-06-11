@@ -3,8 +3,8 @@ module github.com/michael-s92/HyperLedgerLab/inventory/blockchain/src/contract/c
 go 1.12
 
 require (
-	cloud.google.com/go/storage v1.15.0
 	github.com/fsouza/go-dockerclient v1.7.3 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/hyperledger/fabric v2.1.1+incompatible
 	github.com/hyperledger/fabric-amcl v0.0.0-20210603140002-2670f91851c8 // indirect
@@ -20,3 +20,4 @@ require (
 )
 
 replace github.com/hyperledger/fabric => github.com/hyperledger/fabric v1.4.1
+replace github.com/fsouza/go-dockerclient => github.com/fsouza/go-dockerclient v1.4.2

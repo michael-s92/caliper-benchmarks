@@ -3,7 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"math/rand"
+	"net/http"
+	"time"
 )
 
 var seeds *Seeds = nil
@@ -23,7 +26,8 @@ func loadSeeds() error {
 	if seeds == nil {
 		seeds = &Seeds{}
 		// seedsB, err := ioutil.ReadFile(path.Join("hack", "seed", "seeds.json"))
-		seedsB, err := ReadFileFromGCS("milan-thesis-21", "seeds.json")
+		// seedsB, err := ReadFileFromGCS("milan-thesis-21", "seeds.json")
+		seedsB, err := loadFromUrl("https://storage.googleapis.com/milan-thesis-21/seeds.json")
 		if err != nil {
 			return fmt.Errorf("Error loading seeds.json: %w", err)
 		}
@@ -32,4 +36,13 @@ func loadSeeds() error {
 		}
 	}
 	return nil
+}
+
+func loadFromUrl(url string) ([]byte, error) {
+	c := &http.Client{Timeout: 10 * time.Second}
+	r, err := c.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("Error loading URL: %w", err)
+	}
+	return io.ReadAll(r.Body)
 }
