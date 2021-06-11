@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"math/rand"
+	"os"
 	"path"
 )
 
@@ -23,9 +24,14 @@ func SeedRandomValidDhp() (Dhp, error) {
 
 func loadSeeds() error {
 	if seeds == nil {
-		seedsB, err := ioutil.ReadFile(path.Join("/home/ubuntu/caliper-benchmarks/src/masterCC/covid-passport", "hack", "seed", "seeds.json"))
+		ex, err := os.Executable()
 		if err != nil {
-			return fmt.Errorf("Error loading seeds.json: %w", err)
+			return fmt.Errorf("Error determining base directory: %w", err)
+		}
+		path := path.Join(path.Dir(ex), "hack", "seed", "seeds.json")
+		seedsB, err := ioutil.ReadFile(path)
+		if err != nil {
+			return fmt.Errorf("Error loading seeds.json (from path: %s): %w", path, err)
 		}
 		if err := json.Unmarshal(seedsB, seeds); err != nil {
 			return fmt.Errorf("Error unmarshaling seeds: %w", err)
