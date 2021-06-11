@@ -3,6 +3,7 @@ module github.com/michael-s92/HyperLedgerLab/inventory/blockchain/src/contract/c
 go 1.15
 
 require (
+	cloud.google.com/go/storage v1.15.0
 	github.com/Knetic/govaluate v3.0.0+incompatible // indirect
 	github.com/Shopify/sarama v1.28.0 // indirect
 	github.com/fsouza/go-dockerclient v1.7.2 // indirect
@@ -15,11 +16,10 @@ require (
 	github.com/onsi/gomega v1.11.0 // indirect
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
 	github.com/spf13/viper v1.7.1 // indirect
+	github.com/sykesm/zap-logfmt v0.0.4 // indirect
 	go.uber.org/zap v1.16.0 // indirect
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83 // indirect
-	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110 // indirect
-	google.golang.org/grpc v1.36.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )
 
-replace github.com/hyperledger/fabric => github.com/hyperledger/fabric v1.4.0
+replace github.com/hyperledger/fabric => github.com/hyperledger/fabric v1.4.1

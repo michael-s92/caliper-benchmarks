@@ -12,17 +12,16 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/michael-s92/HyperLedgerLab/inventory/blockchain/src/contract/covid-passport/pkg/chaincode"
-	ccrypto "github.com/michael-s92/HyperLedgerLab/inventory/blockchain/src/contract/covid-passport/pkg/crypto"
+	cp "github.com/michael-s92/HyperLedgerLab/inventory/blockchain/src/contract/covid-passport"
 )
 
 type SeedParameters struct {
 	AllValidDhp int `yaml:"allValidDHP,omitempty"`
 }
 
-func generateValidDhp(ix int) (*chaincode.Dhp, error) {
-	tfId := rand.Intn(len(chaincode.TfKeys))
-	tfKey, err := ccrypto.UnmarshalPrivateKey(chaincode.TfKeys[tfId])
+func generateValidDhp(ix int) (*cp.Dhp, error) {
+	tfId := rand.Intn(len(cp.TfKeys))
+	tfKey, err := cp.UnmarshalPrivateKey(cp.TfKeys[tfId])
 	if err != nil {
 		return nil, fmt.Errorf("Error unmarshaling private key: %w", err)
 	}
@@ -31,7 +30,7 @@ func generateValidDhp(ix int) (*chaincode.Dhp, error) {
 	// fmt.Printf("PatientDID: %s", patientDid)
 	// fmt.Printf("SHA256(PatientDID: %s", (ccrypto.Hash([]byte(patientDid))))
 
-	return chaincode.GenerateDhp(strconv.Itoa(ix), strconv.Itoa(tfId), tfKey, patientDid,
+	return cp.GenerateDhp(strconv.Itoa(ix), strconv.Itoa(tfId), tfKey, patientDid,
 		TestTypes[rand.Intn(len(TestTypes))], rand.Intn(1) == 1,
 		time.Now().AddDate(0, 0, -1).Truncate(24*time.Hour),
 		time.Now().AddDate(0, 0, 2).Truncate(24*time.Hour),
@@ -55,7 +54,7 @@ func main() {
 	}
 
 	// Initialize Seeds
-	seeds := chaincode.Seeds{}
+	seeds := cp.Seeds{}
 
 	// Generate Valid DHPs
 	for i := 0; i < seedParams.AllValidDhp; i++ {
