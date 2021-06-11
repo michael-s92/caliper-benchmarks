@@ -31,8 +31,7 @@ func (c *CovidPassportChaincode) InitLedger(stub shim.ChaincodeStubInterface) pb
 }
 
 func (c *CovidPassportChaincode) DoNothing(stub shim.ChaincodeStubInterface) pb.Response {
-	//return c.TestUploadDhpValid(stub)
-	return shim.Success(nil)
+	return c.TestUploadDhpValid(stub)
 }
 
 func (c *CovidPassportChaincode) TestUploadDhpValid(stub shim.ChaincodeStubInterface) pb.Response {
