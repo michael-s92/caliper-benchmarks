@@ -1,0 +1,26 @@
+---
+test:
+  name: simple
+  description: This is an example benchmark for caliper, to test the backend DLT's
+    performance with simple account opening & querying transactions
+  workers:
+    type: local
+    number: 1
+  rounds:
+
+  - label: readBlockchain
+    txNumber: 1
+    rateControl:
+      type: fixed-rate
+      opts:
+        tps: 1
+    callback: benchmarks/masterBenchmark/javacc/doNothing.js
+
+
+monitor:
+  type:
+  - docker
+  docker:
+    name:
+    - all
+  interval: 1
