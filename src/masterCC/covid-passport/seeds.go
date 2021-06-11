@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"time"
@@ -44,5 +44,5 @@ func loadFromUrl(url string) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Error loading URL: %w", err)
 	}
-	return io.ReadAll(r.Body)
+	return ioutil.ReadAll(r.Body)
 }
