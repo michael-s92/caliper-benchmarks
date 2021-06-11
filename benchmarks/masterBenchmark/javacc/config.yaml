@@ -8,6 +8,14 @@ test:
     number: 1
   rounds:
 
+  - label: initLedger
+    txNumber: 1             
+    rateControl:
+      type: fixed-rate
+      opts:
+        tps: 1
+    callback: benchmarks/masterBenchmark/javacc/initLedger.js
+
   - label: readBlockchain
     txNumber: 1
     rateControl:
