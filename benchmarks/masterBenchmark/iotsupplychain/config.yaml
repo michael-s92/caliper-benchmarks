@@ -6,28 +6,25 @@ test:
 
   rounds:
   - label: initLedger
-    txNumber:
-    - 1             
+    txNumber: 1             
     rateControl:
-    - type: fixed-rate
+      type: fixed-rate
       opts:
         tps: 1
     callback: benchmarks/masterBenchmark/iotsupplychain/initLedger.js
 
   - label: common
-    txDuration:
-    - 180
+    txDuration: 180
     rateControl:
-    - type: fixed-rate
+      type: fixed-rate
       opts:
         tps: 50
     callback: benchmarks/masterBenchmark/iotsupplychain/common.js
 
   - label: readBlockchain
-    txNumber:
-    - 1
+    txNumber: 1
     rateControl:
-    - type: fixed-rate
+      type: fixed-rate
       opts:
         tps: 1
     callback: benchmarks/masterBenchmark/iotsupplychain/doNothing.js
