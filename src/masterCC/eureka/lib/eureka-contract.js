@@ -293,38 +293,20 @@ class EurekaContract extends Contract {
                 $elemMatch: {
                     $eq: reviewerId
                 }
-            },
-            reviews: {
-                $elemMatch: {
-                    reviewer_id: reviewerId
-                }
             }
         };
 
-        //let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
         const { resultIterator, metadata } = await ctx.stub.getQueryResultWithPagination(JSON.stringify(reviewingProcessQueryString), 2);
-        if (metadata.fetched_records_count !== 0){
+        if (metadata.fetched_records_count !== 1){
             throw new Error(`Review not possible; Reviewer: ${reviewerId}, Title: ${title}, Author: ${authorId}`);
         }
-        //await Helper.throwErrorIfQueryResultIsNotEmpty(resultIterator, `Review not possible; Reviewer: ${reviewerId}, Title: ${title}, Author: ${authorId}`);
 
-        //get review process from ledger
-        reviewingProcessQueryString = {};
-        reviewingProcessQueryString.selector = {
-            docType: ReviewingProcess.getDocType(),
-            title: title,
-            author_id: authorId,
-            isClosed: false,
-            reviewer_ids: {
-                $elemMatch: {
-                    $eq: reviewerId
-                }
-            }
-        };
+        let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Get ReviewProcess Error; Title: ${title}, Author: ${authorId}`);
 
-        //resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
-        const { resultIterator2, metadata2 } = await ctx.stub.getQueryResultWithPagination(JSON.stringify(reviewingProcessQueryString), 2);
-        let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator2, `Get ReviewProcess Error; Title: ${title}, Author: ${authorId}`);
+        //check if review is already given
+        if(reviewProcess.reviewDoneFrom(reviewerId)){
+            throw new Error('Review already done');
+        }
 
         //store review
         reviewProcess.saveReview(reviewerId, mark, comment);

@@ -26,6 +26,11 @@ class ReviewingProcess {
         this.reviews.push(new Review(reviewerId, mark, comment));
     }
 
+    reviewDoneFrom(reviewerId){
+
+        return this.reviews.findIndex(e => reviewerId === e.reviewer_id) !== -1;
+    }
+
     closeReviewing(){
         this.isClosed = true;
     }
