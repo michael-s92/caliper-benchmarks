@@ -299,8 +299,12 @@ class EurekaContract extends Contract {
             }
         };
 
-        let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
-        await Helper.throwErrorIfQueryResultIsNotEmpty(resultIterator, `Review not possible; Reviewer: ${reviewerId}, Title: ${title}, Author: ${authorId}`);
+        //let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
+        const { resultIterator, metadata } = await stub.getQueryResultWithPagination(JSON.stringify(reviewingProcessQueryString), 2);
+        if (metadata.fetched_records_count !== 0){
+            throw new Error(`Review not possible; Reviewer: ${reviewerId}, Title: ${title}, Author: ${authorId}`);
+        }
+        //await Helper.throwErrorIfQueryResultIsNotEmpty(resultIterator, `Review not possible; Reviewer: ${reviewerId}, Title: ${title}, Author: ${authorId}`);
 
         //get review process from ledger
         reviewingProcessQueryString = {};
@@ -316,7 +320,8 @@ class EurekaContract extends Contract {
             }
         };
 
-        resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
+        //resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
+        const { resultIterator, metadata } = await stub.getQueryResultWithPagination(JSON.stringify(reviewingProcessQueryString), 2);
         let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Get ReviewProcess Error; Title: ${title}, Author: ${authorId}`);
 
         //store review
@@ -377,7 +382,8 @@ class EurekaContract extends Contract {
             }
         };
 
-        let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
+        const { resultIterator, metadata } = await stub.getQueryResultWithPagination(JSON.stringify(reviewingProcessQueryString), 2);
+        //let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
         let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Get ReviewProcess Error; Title: ${title}, Author: ${authorId}`);
 
         //close process and calculate mark
