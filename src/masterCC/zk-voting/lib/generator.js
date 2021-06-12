@@ -12,11 +12,11 @@ const parameters = read.sync('seedParameters.yaml');
 
 let admins = [];
 
-function generateAdmin(type, index) {
+function generateAdmin(index) {
 
     let id = type + Utils.generateRandomWord(parameters.id_length) + index;
     let key = Utils.generateRandomKey(parameters.key_length);
-    let name = type + ": " + parameters.names[Utils.getRandomInt(parameters.names.length)];
+    let name = "A: " + parameters.names[Utils.getRandomInt(parameters.names.length)];
 
     return {
         id: id,
@@ -29,7 +29,7 @@ function generateAdmin(type, index) {
 
 
 for (let i = 0; i < parameters.admins; i++) {
-    admins.push(generateAdmin(authorUserType, i));
+    admins.push(generateAdmin(i));
 }
 
 const json = JSON.stringify({
