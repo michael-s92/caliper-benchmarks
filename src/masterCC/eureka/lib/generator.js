@@ -24,7 +24,7 @@ const editorUserType = 'E';
 function generateUser(type, index) {
 
     let id = type + Utils.generateRandomWord(parameters.id_length) + index;
-    let key = Utils.generateRandomString(parameters.key_length);
+    let key = Utils.generateRandomKey(parameters.key_length);
     let name = type + ": " + parameters.names[Utils.getRandomInt(parameters.names.length)];
 
     return {
