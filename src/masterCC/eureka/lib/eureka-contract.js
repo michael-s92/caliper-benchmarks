@@ -218,9 +218,9 @@ class EurekaContract extends Contract {
             throw new Error(`Reviewing for Article with title ${title} from author ${authorId} already exists`);
         }
 
-        /*
         //check all reviewers
         let reviewerIds = JSON.parse(reviewer_ids);
+        /*
         for (const reviewerId of reviewerIds) {
             let reviewerAsByte = await ctx.stub.getState(reviewerId);
             if (!reviewerAsByte || !reviewerAsByte.toString()) {
@@ -228,7 +228,7 @@ class EurekaContract extends Contract {
             }
         }
         */
-       
+
         //create object, assign reviewers
         let reviewing = new ReviewingProcess(authorId, title, editor, reviewerIds, [], false, 0);
         await ctx.stub.putState(authorTitleReviewingIndexKey, Buffer.from(JSON.stringify(reviewing)));
