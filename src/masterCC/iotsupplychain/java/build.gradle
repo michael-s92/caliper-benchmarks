@@ -63,9 +63,30 @@ shadowJar {
     }
 }
 
+jacocoTestCoverageVerification {
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude:  [
+                    'org/hyperledger/fabric/samples/fabcar/Start.*'
+            ])
+        })
+    }
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.7
+            }
+        }
+    }
+    
+    finalizedBy jacocoTestReport
+}
+
 test {
     useJUnitPlatform()
     testLogging {
         events "passed", "skipped", "failed"
     }
 }
+
+check.dependsOn jacocoTestCoverageVerification
