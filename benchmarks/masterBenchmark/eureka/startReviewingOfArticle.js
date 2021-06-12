@@ -24,6 +24,13 @@ class startReviewingOfArticle {
         // select article
         let articles = seeds.initArticle;
 
+        let d = new Date();
+        let up = d.getSeconds() + 5;
+        for(let i = 0; i < up; i++){
+            let obj = article.shift();
+            article.push(obj);
+        }
+
         do{
             randomAccessKey = utils.getRandomInt(articles.length);
         } while(articles[randomAccessKey] === undefined);
@@ -33,8 +40,9 @@ class startReviewingOfArticle {
         // select reviewers
         let reviewerIds = [];
         let allReviewerIds = seeds.reviewers.map(e => e.id);
-        allReviewerIds = allReviewerIds.slice(0, Utils.getRandomInt(allReviewerIds.length));
-
+        //reviewerIds = allReviewerIds.slice(0, Utils.getRandomInt(allReviewerIds.length));
+        reviewerIds = allReviewerIds;
+        
         // startReviewingOfArticle(ctx, editorId, editorKey, title, authorId, reviewerIds)
 	    args = {
                 chaincodeFunction: 'startReviewingOfArticle',
