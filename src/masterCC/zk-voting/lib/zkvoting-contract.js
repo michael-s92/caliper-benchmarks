@@ -36,7 +36,7 @@ class ZKVotingContract extends Contract {
 
         for (const adm of seeds.admins) {
             let hashedKey = sha512(adm.key);
-            let objAdmin = new Author(adm.id, hashedKey);
+            let objAdmin = new Admins(adm.id, hashedKey);
             await ctx.stub.putState(adm.id, Buffer.from(JSON.stringify(objAdmin)));
         }
 
