@@ -72,21 +72,11 @@ channels:
         eventSource: true
 
     chaincodes:
-    - id: notarization-v2
-      version: v1
-      language: node
-      path: src/masterCC/notarization-v2
-      metadataPath: src/masterCC/notarization-v2/metadata
     - id: iotsupplychain
       version: v1
-      language: node
-      path: src/masterCC/iotsupplychain/node
+      language: java
+      path: src/masterCC/iotsupplychain/java
       metadataPath: src/masterCC/iotsupplychain/node/metadata
-    - id: eureka
-      version: v1
-      language: node
-      path: src/masterCC/eureka
-      metadataPath: src/masterCC/eureka/metadata
 
 organizations:
   Org1:
