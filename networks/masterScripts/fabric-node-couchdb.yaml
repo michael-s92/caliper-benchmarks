@@ -90,7 +90,7 @@ channels:
     - id: zk-voting
       version: v1
       language: node
-      path: src/zk-voting/eureka
+      path: src/masterCC/zk-voting
       metadataPath: src/masterCC/zk-voting/metadata
 
 organizations:
