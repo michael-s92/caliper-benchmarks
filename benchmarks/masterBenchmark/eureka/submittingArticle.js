@@ -19,7 +19,8 @@ class submittingArticle {
 
         let article = articles[randomAccessKey];
 
-        let randomTitle = "A" + Utils.getRandomInt(100) + ": " + article.title;
+        let d = new Date();
+        let randomTitle = "A" + d.getMinutes() + d.getSeconds() + ": " + article.title;
 
         // submittingArticle(ctx, title, author_id, coauthor_ids, ref_author_ids, fee, lref, authorKey)
 	    args = {
