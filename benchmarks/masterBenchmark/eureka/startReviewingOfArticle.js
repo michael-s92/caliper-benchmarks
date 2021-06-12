@@ -3,7 +3,6 @@
 
 const utils = require('./utils');
 const seeds = require('./seeds.json');
-const Utils = require('./utils');
 
 class startReviewingOfArticle {
 
@@ -27,8 +26,8 @@ class startReviewingOfArticle {
         let d = new Date();
         let up = d.getSeconds() + 5;
         for(let i = 0; i < up; i++){
-            let obj = article.shift();
-            article.push(obj);
+            let obj = articles.shift();
+            articles.push(obj);
         }
 
         do{
@@ -42,7 +41,7 @@ class startReviewingOfArticle {
         let allReviewerIds = seeds.reviewers.map(e => e.id);
         //reviewerIds = allReviewerIds.slice(0, Utils.getRandomInt(allReviewerIds.length));
         reviewerIds = allReviewerIds;
-        
+
         // startReviewingOfArticle(ctx, editorId, editorKey, title, authorId, reviewerIds)
 	    args = {
                 chaincodeFunction: 'startReviewingOfArticle',
