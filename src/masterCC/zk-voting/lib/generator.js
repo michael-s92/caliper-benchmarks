@@ -14,7 +14,7 @@ let admins = [];
 
 function generateAdmin(index) {
 
-    let id = type + Utils.generateRandomWord(parameters.id_length) + index;
+    let id = Utils.generateRandomWord(parameters.id_length) + index;
     let key = Utils.generateRandomKey(parameters.key_length);
     let name = "A: " + parameters.names[Utils.getRandomInt(parameters.names.length)];
 
