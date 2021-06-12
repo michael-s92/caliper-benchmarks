@@ -6,15 +6,17 @@
 
 const { Contract } = require('fabric-contract-api');
 const Election = require('./election');
+const Admins = require('./admins');
+
+const seeds = require('./seeds.json');
+const sha512 = require('js-sha512');
+
 /*
 const Article = require('./article');
 const { Author, Editor, Reviewer } = require('./users');
 const ReviewingProcess = require('./reviewing_process');
 const { ArticleSubmittedEvent, DoReviewEvent, ReviewDoneEvent } = require('./chaincode_events');
 const Helper = require('./helper');
-const sha512 = require('js-sha512');
-
-const seeds = require('./seeds.json');
 
 const authorTitleIndexName = "author~title";
 const authorTitleReviewingIndexName = "author~title~reviewing";
@@ -32,40 +34,56 @@ class ZKVotingContract extends Contract {
     async initLedger(ctx) {
         console.info("InitLedger Transaction Invoked");
 
-    }
+        for (const adm of seeds.admins) {
+            let hashedKey = sha512(adm.key);
+            let objAdmin = new Author(adm.id, hashedKey);
+            await ctx.stub.putState(adm.id, Buffer.from(JSON.stringify(objAdmin)));
+        }
 
-    async configureElection(ctx) {
-        console.info("InitLedger Transaction Invoked");
 
-    }
-
-    async closeElection(ctx) {
-        console.info("InitLedger Transaction Invoked");
 
     }
 
-    async getCandidates(ctx) {
-        console.info("InitLedger Transaction Invoked");
+    async configureElection(ctx, electionId, candidates, adminId, adminKey) {
+
 
     }
 
-    async vote(ctx) {
-        console.info("InitLedger Transaction Invoked");
+    async closeElection(ctx, electionId, adminId, adminKey) {
+
 
     }
 
-    async getResults(ctx) {
-        console.info("InitLedger Transaction Invoked");
+    async getCandidates(ctx, electionId) {
 
+        
     }
 
-    async hasVoted(ctx) {
-        console.info("InitLedger Transaction Invoked");
+    async vote(ctx, electionId, voterId, voteIndex) {
 
+        
     }
 
-    async voteOK(ctx) {
-        console.info("InitLedger Transaction Invoked");
+    async getResults(ctx, electionId) {
+
+        
+    }
+
+    async hasVoted(ctx, electionId, voterId) {
+        
+        
+    }
+
+    async voteOK(ctx, electionId, voterId) {
+
+        if (electionId.length <= 0) {
+            throw new Error("electionId must be non-empty string");
+        }
+
+        if (voterId.length <= 0) {
+            throw new Error("voterId must be non-empty string");
+        }
+        
 
     }
 }
