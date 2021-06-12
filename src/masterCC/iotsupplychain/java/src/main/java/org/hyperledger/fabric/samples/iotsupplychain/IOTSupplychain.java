@@ -42,7 +42,7 @@ public class IOTSupplychain {
 	@Transaction()
 	public void sendBanchToWarehouse(final Context ctx, final String batchId, final String farmerId, final String warehouseId){
 		
-		if(batchId == null || batchId.isEmpty()) {
+		/*if(batchId == null || batchId.isEmpty()) {
 			throw new ChaincodeException(CCErrors.KEY_NULL_OR_EMPTY.toString());
 		}
 		
@@ -63,14 +63,14 @@ public class IOTSupplychain {
 		
 		Batch batch = new Batch(batchId, farmerId, warehouseId);
 		batchState = genson.serialize(batch);
-		stub.putStringState(batchId, batchState);
+		stub.putStringState(batchId, batchState);*/
 	}
 	
 	@Transaction()
 	public void saveChemicalAnalysToBatch(final Context ctx, final String batchId, final String labId, 
 			final String impurity_percent, final String broken_percent, final String damaged_percent, final String greenisch_percent) {
 		
-		if(batchId == null || batchId.isEmpty()) {
+		/*if(batchId == null || batchId.isEmpty()) {
 			throw new ChaincodeException(CCErrors.KEY_NULL_OR_EMPTY.toString());
 		}
 		
@@ -121,13 +121,13 @@ public class IOTSupplychain {
 		batch.storeLabResults(labId, impurity, broken, damaged, greenisch);
 		
 		batchState = genson.serialize(batch);
-		stub.putStringState(batchId, batchState);
+		stub.putStringState(batchId, batchState);*/
 	}
 	
 	@Transaction()
 	public void savePsysicalAnalysToBatch(final Context ctx, final String warehouseId, final String moisture_percent) {
 		
-		if(warehouseId == null || warehouseId.isEmpty()) {
+		/*if(warehouseId == null || warehouseId.isEmpty()) {
 			throw new ChaincodeException(CCErrors.KEY_NULL_OR_EMPTY.toString());
 		}
 		
@@ -146,7 +146,7 @@ public class IOTSupplychain {
 		inner.put("warehouseId", warehouseId);
 		inner.put("inWarehouse", true);
 		query.put("selector", inner);
-		stub.getQueryResult(query.toString());
+		stub.getQueryResult(query.toString());*/
 		
 		/*
 		  // fetch all batchs that are in warehouse
