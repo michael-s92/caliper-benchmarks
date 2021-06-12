@@ -15,6 +15,7 @@
 package org.hyperledger.fabric.samples.fabcar;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.hyperledger.fabric.contract.Context;
@@ -54,8 +55,22 @@ public final class IOTSupplychain implements ContractInterface {
     }
     
     @Transaction()
-    public void initLedger(final Context ctx) {
+    public List<Integer> initLedger(final Context ctx) {
         // comment
+    	
+    	/*
+    	 for(const batchJson of seeds.initBatchs){
+           
+            let batch = Batch.fromJSON(batchJson);
+            await ctx.stub.putState(batchJson.id, Buffer.from(JSON.stringify(batch)));
+        }
+    	 */
+    	
+    	List<Integer> test = new ArrayList<Integer>();
+    	test.add(1); test.add(2); test.add(3);
+    	
+    	Collections.shuffle(test);
+    	return test;
     }
 
     @Transaction()
