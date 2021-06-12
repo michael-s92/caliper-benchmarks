@@ -35,6 +35,13 @@ func SeedRandomValidDhp() (Dhp, error) {
 	return seeds.ValidDhps[rand.Intn(len(seeds.ValidDhps))], nil
 }
 
+func SeedFirstValidDhp() (Dhp, error) {
+	if err := loadSeeds(); err != nil {
+		return Dhp{}, err
+	}
+	return seeds.ValidDhps[0], nil
+}
+
 func loadSeeds() error {
 	if seeds == nil {
 		seeds = &Seeds{}

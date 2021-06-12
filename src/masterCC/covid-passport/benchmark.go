@@ -23,7 +23,7 @@ func (c *CovidPassportChaincode) DoNothing(stub shim.ChaincodeStubInterface) pb.
 }
 
 func (c *CovidPassportChaincode) TestUploadDhpValid(stub shim.ChaincodeStubInterface) pb.Response {
-	dhp1, err := SeedRandomValidDhp()
+	dhp1, err := SeedFirstValidDhp()
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Error seeding random valid DHP: %s", err))
 	}
