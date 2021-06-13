@@ -10,16 +10,10 @@ class Helper {
 
     static async getAllResults(iterator){
         let allResults = [];
-
+        let res;
         while(true){
-            let res;
-            try{
-                res = await iterator.next();
-            } catch(err){
-                throw new Error("catch: " + JSON.stringify(err));
-                //console.log(err);
-                return;
-            }
+            res = await iterator.next();
+            
             throw new Error("if: " + JSON.stringify(res));
             if(res.value && res.value.value.toString()){
                 try{
