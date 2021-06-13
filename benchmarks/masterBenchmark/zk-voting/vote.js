@@ -25,7 +25,7 @@ class vote {
 
         do{
             randomAccessKey = utils.getRandomInt(candidates.length);
-        } while(candidats[randomAccessKey] === undefined);
+        } while(candidates[randomAccessKey] === undefined);
 
         let candidat = candidates[randomAccessKey];
 
