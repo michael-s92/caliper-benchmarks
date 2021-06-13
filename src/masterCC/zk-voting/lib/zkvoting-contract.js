@@ -6,7 +6,7 @@
 
 const { Contract } = require('fabric-contract-api');
 const Election = require('./election');
-const Vote = require('./vote');
+const MyVote = require('./myvote');
 const Admins = require('./admins');
 
 const seeds = require('./seeds.json');
@@ -188,7 +188,7 @@ class ZKVotingContract extends Contract {
             throw new Error("Unsupported voting - candidat error");
         }
 
-        let myvote = new Vote(electionId, voterId, voteInd);
+        let myvote = new MyVote(electionId, voterId, voteInd);
         election.storeVote(myvote);
 
         await ctx.stub.putState(electionId, Buffer.from(JSON.stringify(election)));
