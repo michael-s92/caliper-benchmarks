@@ -24,11 +24,12 @@ func (c *CovidPassportChaincode) InitLedger(stub shim.ChaincodeStubInterface) pb
 		dhp1 := dhp
 		dhp1B, err := json.Marshal(&dhp1)
 		if err != nil {
-			return shim.Error(fmt.Sprintf("Error marshaling dhp1: %s", err))
+			return shim.Error(fmt.Sprintf("Error marshaling dhp: %s", err))
 		}
-		resp := c.UploadDhp(stub, []string{string(dhp1B)})
-		if resp.Status != shim.OK {
-			return resp
+
+		dhpCompKey := string(dhp1.Data.Patient) + string(dhp1.Data.Method)
+		if err := stub.PutState(dhpCompKey, dhp1B); err != nil {
+			return shim.Error(fmt.Sprintf("Error storing dhp: %s", err))
 		}
 	}
 
