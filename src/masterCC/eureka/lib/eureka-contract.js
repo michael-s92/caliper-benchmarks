@@ -297,7 +297,7 @@ class EurekaContract extends Contract {
         };
 
         const { resultIterator, metadata } = await ctx.stub.getQueryResultWithPagination(JSON.stringify(reviewingProcessQueryString), 2);
-        if (metadata.fetched_records_count !== 1){
+        /*if (metadata.fetched_records_count !== 1){
             throw new Error(`Review not possible; Reviewer: ${reviewerId}, Title: ${title}, Author: ${authorId}`);
         }
 
@@ -316,7 +316,7 @@ class EurekaContract extends Contract {
 
         //send event to editor that review is done
         let payload = new ReviewDoneEvent(authorId, title, reviewProcess.editor.id);
-        ctx.stub.setEvent('review_done_event', Buffer.from(JSON.stringify(payload)));
+        ctx.stub.setEvent('review_done_event', Buffer.from(JSON.stringify(payload)));*/
     }
 
     async closeReviewingOfArticle(ctx, editorId, editorKey, authorId, title) {
