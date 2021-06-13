@@ -16,13 +16,13 @@ test:
         tps: 1
     callback: benchmarks/masterBenchmark/covid-passport/initLedger.js
 
-#  - label: common
-#    txDuration: 180
-#    rateControl:
-#      type: fixed-rate
-#      opts:
-#        tps: 50
-#    callback: benchmarks/masterBenchmark/covid-passport/common.js
+  - label: common
+    txDuration: 10
+    rateControl:
+      type: fixed-rate
+      opts:
+        tps: 5
+    callback: benchmarks/masterBenchmark/covid-passport/common.js
 
   - label: readBlockchain
     txNumber: 1
