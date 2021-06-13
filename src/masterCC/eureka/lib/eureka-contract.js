@@ -302,7 +302,8 @@ class EurekaContract extends Contract {
         }
 
         let tmp = await Helper.getAllResults(resultIterator);
-        throw new Error(JSON.stringify(tmp));
+        let reviewProcess = tmp[0];
+        throw new Error("Contain: " + JSON.stringify(tmp));
 /*
         let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Get ReviewProcess Error; Title: ${title}, Author: ${authorId}`);
 
