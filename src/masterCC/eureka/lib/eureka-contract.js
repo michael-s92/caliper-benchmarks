@@ -297,30 +297,8 @@ class EurekaContract extends Contract {
             return;
         }
 
-        //check if reviewingProcess exists and if review has right to review that article
-        let reviewingProcessQueryString = {};
-        /*reviewingProcessQueryString.selector = {
-            docType: ReviewingProcess.getDocType(),
-            title: title,
-            author_id: authorId,
-            isClosed: false,
-            reviewer_ids: {
-                $elemMatch: {
-                    $eq: reviewerId
-                }
-            },
-            reviews: {
-                $elemMatch: {
-                    reviewer_id: reviewerId
-                }
-            }
-        };
-
-        let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
-        await Helper.throwErrorIfQueryResultIsNotEmpty(resultIterator, `Review not possible; Reviewer: ${reviewerId}, Title: ${title}, Author: ${authorId}`);
-*/
         //get review process from ledger
-        reviewingProcessQueryString = {};
+        let reviewingProcessQueryString = {};
         reviewingProcessQueryString.selector = {
             docType: ReviewingProcess.getDocType(),
             title: title,
@@ -334,7 +312,25 @@ class EurekaContract extends Contract {
         };
 
         let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
-        let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}, Reviewer: ${reviewerId}, isClosed: ${isClosed}`);
+
+        //-------------------------------
+        let authorTitleReviewingIndexKey = await ctx.stub.createCompositeKey(authorTitleReviewingIndexName, [authorId, title, "reviewing"]);
+        let foundAsByter = await ctx.stub.getState(authorTitleReviewingIndexKey);
+
+        if (!foundAsByter || !foundAsByter.toString()) {
+            throw new Error(`foundAsByter doesnt exist`);
+        }
+
+        let foundjson = {};
+        try {
+            foundjson = JSON.parse(foundAsByter.toString());
+        } catch (err) {
+            throw new Error(`Failed to parse found, err: ${err}`);
+        }
+        let found = Editor.fromJSON(foundjson);
+
+        //-------------------------------
+        let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}, Reviewer: ${reviewerId}, Found ${found}`);
 
         if(reviewProcess.reviewDoneFrom(reviewerId)){
             throw new Error("Review already done");
