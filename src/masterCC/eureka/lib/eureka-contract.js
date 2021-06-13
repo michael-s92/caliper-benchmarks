@@ -63,8 +63,6 @@ class EurekaContract extends Contract {
             await ctx.stub.putState(authorTitleIndexKey, Buffer.from(JSON.stringify(objArticle)));
         }
 
-        let tmp = [];
-
         //process of reviewing
         for (const reviewing of seeds.openReviewingProcess) {
 
@@ -80,32 +78,8 @@ class EurekaContract extends Contract {
 
             await ctx.stub.putState(authorTitleReviewingIndexKey, Buffer.from(JSON.stringify(reviewingObj)));
 
-            let foundAsByter = await ctx.stub.getState(authorTitleReviewingIndexKey);
-
-            if (!foundAsByter || !foundAsByter.toString()) {
-                throw new Error(`foundAsByter doesnt exist`);
-            }
-
-            let foundjson = {};
-            try {
-                foundjson = JSON.parse(foundAsByter.toString());
-            } catch (err) {
-                throw new Error(`Failed to parse found, err: ${err}`);
-            }
-            let found = ReviewingProcess.fromJSON(foundjson);
-
-            tmp.push({
-                author: reviewing.author_id,
-                title: reviewing.title,
-                reviewers: reviewers_id,
-                process: reviewingObj,
-                found: found,
-                foundJson: foundjson
-            });
-
         }
 
-        throw new Error(JSON.stringify(tmp));
         //process of reviewing for closing
         for (const reviewing of seeds.reviewerForClosing) {
 
@@ -358,7 +332,8 @@ class EurekaContract extends Contract {
         let found = ReviewingProcess.fromJSON(foundjson);
 
         //-------------------------------
-        let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}, Reviewer: ${reviewerId}, Found ${JSON.stringify(found)}, FoundJSON ${JSON.stringify(foundjson)}`);
+        let reviewProcess = found;
+        //let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}, Reviewer: ${reviewerId}, Found ${JSON.stringify(found)}, FoundJSON ${JSON.stringify(foundjson)}`);
 
         if (reviewProcess.reviewDoneFrom(reviewerId)) {
             throw new Error("Review already done");
