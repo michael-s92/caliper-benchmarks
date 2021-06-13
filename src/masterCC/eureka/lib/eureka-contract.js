@@ -63,12 +63,18 @@ class EurekaContract extends Contract {
             await ctx.stub.putState(authorTitleIndexKey, Buffer.from(JSON.stringify(objArticle)));
         }
 
+        let tmp = [];
+
         //process of reviewing
         for (const reviewing of seeds.openReviewingProcess) {
 
             let reviews = [];
             let reviewers_id = reviewing.reviewers.map(e => e.id);
-
+            tmp.push({
+                author: reviewing.author_id, 
+                title: reviewing.title,
+                reviewers: reviewers_id
+            });
             let hashedKey = sha512(reviewing.editor.key);
             let editor = new Editor(reviewing.editor.id, reviewing.editor.name, hashedKey);
 
@@ -78,6 +84,7 @@ class EurekaContract extends Contract {
             await ctx.stub.putState(authorTitleReviewingIndexKey, Buffer.from(JSON.stringify(reviewingObj)));
         }
 
+        throw new Error(JSON.stringify(tm));
          //process of reviewing for closing
          for (const reviewing of seeds.reviewerForClosing) {
 
