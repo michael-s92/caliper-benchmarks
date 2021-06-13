@@ -10,8 +10,8 @@ import (
 )
 
 func (c *CovidPassportChaincode) InitLedger(stub shim.ChaincodeStubInterface) pb.Response {
-	for key, tf := range TfKeys {
-		if err := GenerateTestFacility(stub, key, tf); err != nil {
+	for id, tfkey := range TfKeys {
+		if err := GenerateTestFacility(stub, id, tfkey); err != nil {
 			return shim.Error(err.Error())
 		}
 	}

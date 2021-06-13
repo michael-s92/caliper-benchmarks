@@ -187,6 +187,24 @@ func (c *CovidPassportChaincode) VerifyResult(stub shim.ChaincodeStubInterface, 
 		return shim.Error(fmt.Sprintf("Error retrieving DHP from ledger: %s", err))
 	}
 	if len(dhpB) == 0 {
+		// DEBUG
+		if true {
+			wstate, err := stub.GetStateByRange("", "")
+			if err != nil {
+				return shim.Error(fmt.Sprintf("Error retrieving chaincode world state: %s", err))
+			}
+			var keys []string
+			defer wstate.Close()
+			for wstate.HasNext() {
+				kv, err := wstate.Next()
+				if err != nil {
+					return shim.Error(fmt.Sprintf("Error accessing chaincode world state: %s", err))
+				}
+				keys = append(keys, kv.Key)
+			}
+			return shim.Error(fmt.Sprintf("DHP for (%s, %s) not found / empty: %s\nWorld State:\n%#v", patient, method, err, keys))
+		}
+		// DEBUG END
 		return shim.Error(fmt.Sprintf("DHP for (%s, %s) not found / empty: %s", patient, method, err))
 	}
 	dhp := Dhp{}
