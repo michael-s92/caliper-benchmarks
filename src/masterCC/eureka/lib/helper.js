@@ -58,6 +58,12 @@ class Helper {
         }
     }
 
+    static throwErrorIfStringIsEmpty(input){
+        if (input === undefined || input.length <= 0) {
+            throw new Error("reviewerId must be non-empty string");
+        }
+    }
+
 }
 
 module.exports = Helper;

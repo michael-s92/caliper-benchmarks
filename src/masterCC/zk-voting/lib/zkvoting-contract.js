@@ -49,7 +49,11 @@ class ZKVotingContract extends Contract {
 
     async configureElection(ctx, electionId, candidates, adminId, adminKey) {
 
-
+        Helper.throwErrorIfStringIsEmpty(electionId);
+        Helper.throwErrorIfStringIsEmpty(candidates);
+        Helper.throwErrorIfStringIsEmpty(adminId);
+        Helper.throwErrorIfStringIsEmpty(adminKey);
+        
     }
 
     async closeElection(ctx, electionId, adminId, adminKey) {
