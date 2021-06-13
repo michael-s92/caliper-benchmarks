@@ -178,6 +178,11 @@ class ZKVotingContract extends Contract {
         }
         let election = Election.fromJSON(electionjson);
 
+        if(election.isClosed){
+            console.log("Voting Closed");
+            return;
+        }
+
         let voteInd = election.candidates.findIndex(c => c === candidat);
         if(voteInd === -1 ){
             throw new Error("Unsupported voting - candidat error");
