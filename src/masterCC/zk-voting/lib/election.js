@@ -1,5 +1,7 @@
 'use strict';
 
+const Utils = require('./utils');
+
 const docType = "election-doc";
 
 class Election {
@@ -21,6 +23,11 @@ class Election {
     close(){
         this.isClosed = true;
     }
+
+    getCandidates(){
+        return Utils.shuffle(this.candidates);
+    }
+
 }
 
 module.exports = Election;

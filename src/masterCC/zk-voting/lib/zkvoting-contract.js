@@ -138,6 +138,27 @@ class ZKVotingContract extends Contract {
 
     async getCandidates(ctx, electionId) {
 
+        Helper.throwErrorIfStringIsEmpty(electionId);
+
+        // check electionId
+        let electionAsBytes = await ctx.stub.getState(electionId);
+        if (!Helper.objExists(electionAsBytes)) {
+            throw new Error(`Election ${electionId} doesnt exist`);
+        }
+
+        let electionjson = {};
+        try {
+            electionjson = JSON.parse(electionAsBytes.toString());
+        } catch (err) {
+            throw new Error(`Failed to parse Election ${electionjson}, err: ${err}`);
+        }
+        let election = Election.fromJSON(electionjson);
+
+        let result = {
+            election_id: electionId,
+            candidates: election.getCandidates()
+        };
+        return JSON.stringify(result);
 
     }
 

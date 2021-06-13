@@ -47,6 +47,22 @@ class Utils {
 
         return result;
     }
+
+    static shuffle(inArray) {
+        let array = inArray;
+        var currentIndex = array.length,  randomIndex;
+      
+        while (0 !== currentIndex) {
+      
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex--;
+      
+          [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+        }
+      
+        return array;
+      }
 }
 
 module.exports = Utils;
