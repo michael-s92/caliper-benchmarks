@@ -35,7 +35,7 @@ class reviewArticle {
 
         let review = reviews[randomAccessKey];
 
-        console.log("Reviewer: " + review + "\nProcess: " + reviewingProcess);
+        console.log("Reviewer: " + JSON.stringify(reviewer) + "\nProcess: " + JSON.stringify(reviewingProcess));
 
         // reviewArticle(ctx, reviewerId, reviewerKey, authorId, title, mark, comment)
 	    args = {
