@@ -72,6 +72,11 @@ class Election {
         return this.votes.findIndex(v => voterId === v.voterId) !== -1;
     }
 
+    voteOK(voterId){
+
+        return this.votes.findIndex(v => voterId === v.voterId) !== -1;
+    }
+
 }
 
 module.exports = Election;
