@@ -36,6 +36,17 @@ class Utils {
         }
         return sentence;
     }
+
+    static getRandomArrayOfStrings(len){
+        
+        let result = [];
+        for(let i = 0; i < len; i++) {
+            let tmp = "C" + i + ": " + this.generateRandomWord;
+            result.push(tmp);
+        }
+
+        return result;
+    }
 }
 
 module.exports = Utils;
