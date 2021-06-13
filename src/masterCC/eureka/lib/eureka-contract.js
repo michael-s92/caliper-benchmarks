@@ -70,7 +70,7 @@ class EurekaContract extends Contract {
 
             let reviews = [];
             let reviewers_id = reviewing.reviewers.map(e => e.id);
-        
+
             let hashedKey = sha512(reviewing.editor.key);
             let editor = new Editor(reviewing.editor.id, reviewing.editor.name, hashedKey);
 
@@ -78,19 +78,36 @@ class EurekaContract extends Contract {
 
             let reviewingObj = new ReviewingProcess(reviewing.author_id, reviewing.title, editor, reviewers_id, reviews, false, 0);
 
+            await ctx.stub.putState(authorTitleReviewingIndexKey, Buffer.from(JSON.stringify(reviewingObj)));
+
+            let foundAsByter = await ctx.stub.getState(authorTitleReviewingIndexKey);
+
+            if (!foundAsByter || !foundAsByter.toString()) {
+                throw new Error(`foundAsByter doesnt exist`);
+            }
+
+            let foundjson = {};
+            try {
+                foundjson = JSON.parse(foundAsByter.toString());
+            } catch (err) {
+                throw new Error(`Failed to parse found, err: ${err}`);
+            }
+            let found = ReviewingProcess.fromJSON(foundjson);
+
             tmp.push({
-                author: reviewing.author_id, 
+                author: reviewing.author_id,
                 title: reviewing.title,
                 reviewers: reviewers_id,
-                process: reviewingObj
+                process: reviewingObj,
+                found: found,
+                foundJson: foundjson
             });
 
-            await ctx.stub.putState(authorTitleReviewingIndexKey, Buffer.from(JSON.stringify(reviewingObj)));
         }
 
         throw new Error(JSON.stringify(tmp));
-         //process of reviewing for closing
-         for (const reviewing of seeds.reviewerForClosing) {
+        //process of reviewing for closing
+        for (const reviewing of seeds.reviewerForClosing) {
 
             let reviews = [];
             let reviewers_id = reviewing.reviewers.map(e => e.id);
@@ -343,7 +360,7 @@ class EurekaContract extends Contract {
         //-------------------------------
         let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}, Reviewer: ${reviewerId}, Found ${JSON.stringify(found)}, FoundJSON ${JSON.stringify(foundjson)}`);
 
-        if(reviewProcess.reviewDoneFrom(reviewerId)){
+        if (reviewProcess.reviewDoneFrom(reviewerId)) {
             throw new Error("Review already done");
         }
 
