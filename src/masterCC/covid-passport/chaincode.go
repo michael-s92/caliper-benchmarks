@@ -82,10 +82,37 @@ func (c *CovidPassportChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Res
 	return shim.Error("Received unknown function invocation")
 }
 
+// PurgeExpiredDhps deletes all expired DHPs (GDPR compliance)
 func (c *CovidPassportChaincode) PurgeExpiredDhps(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// Input Validation
 	if len(args) != 0 {
 		return shim.Error("Incorrect number of arguments. Expecting 0")
+	}
+
+	wstate, err := stub.GetStateByRange("", "")
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Error retrieving chaincode world state: %s", err))
+	}
+	defer wstate.Close()
+	for wstate.HasNext() {
+		kv, err := wstate.Next()
+		if err != nil {
+			return shim.Error(fmt.Sprintf("Error accessing chaincode world state: %s", err))
+		}
+
+		var dhp Dhp
+		// Skip if not a DHP
+		if err := json.Unmarshal(kv.Value, &dhp); err != nil {
+			continue
+		}
+
+		// Delete if expired
+		if dhp.Data.Date.After(dhp.Data.ExpiryDate) {
+			dhpCompKey := string(dhp.Data.Patient) + string(dhp.Data.Method)
+			if err := stub.DelState(dhpCompKey); err != nil {
+				return shim.Error(fmt.Sprintf("Error deleting expired DHP: %s", err))
+			}
+		}
 	}
 
 	return shim.Success(nil)
@@ -133,7 +160,10 @@ func (c *CovidPassportChaincode) UploadDhp(stub shim.ChaincodeStubInterface, arg
 		return shim.Error(fmt.Sprintf("Error marshaling DHP: %s", err))
 	}
 	// dhpCompKey := stub.CreateCompositeKey("patient~method", []string{string(dhp.Data.Patient), string(dhp.Data.Method)})
-	stub.PutState(dhp.Id, storeDhp)
+	dhpCompKey := string(dhp.Data.Patient) + string(dhp.Data.Method)
+	if err := stub.PutState(dhpCompKey, storeDhp); err != nil {
+		return shim.Error(fmt.Sprintf("Error storing DHP: %s", err))
+	}
 
 	return shim.Success(nil)
 }
@@ -145,15 +175,27 @@ func (c *CovidPassportChaincode) VerifyResult(stub shim.ChaincodeStubInterface, 
 	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting 2")
 	}
-
-	// TODO
-	// stub.GetQueryResult("")
-	// TODO
+	patient := args[0]
+	testType := args[1]
+	// dhpCompKey := stub.CreateCompositeKey("patient~method", []string{patient, testType})
+	dhpCompKey := patient + testType
+	// res, err := stub.GetQueryResult("")
+	dhpB, err := stub.GetState(dhpCompKey)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Error retrieving DHP from ledger: %s", err))
+	}
+	dhp := Dhp{}
+	if err := json.Unmarshal(dhpB, &dhp); err != nil {
+		return shim.Error(fmt.Sprintf("Error unmarshaling DHP: %s", err))
+	}
 
 	payload, err := json.Marshal(struct {
 		Method TestType `json:"method"`
 		Result bool     `json:"result"`
-	}{})
+	}{
+		Method: dhp.Data.Method,
+		Result: dhp.Data.Result,
+	})
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Error constructing response payload: %s", err))
 
