@@ -178,13 +178,16 @@ func (c *CovidPassportChaincode) VerifyResult(stub shim.ChaincodeStubInterface, 
 		return shim.Error("Incorrect number of arguments. Expecting 2")
 	}
 	patient := args[0]
-	testType := args[1]
+	method := args[1]
 	// dhpCompKey := stub.CreateCompositeKey("patient~method", []string{patient, testType})
-	dhpCompKey := patient + testType
+	dhpCompKey := patient + method
 	// res, err := stub.GetQueryResult("")
 	dhpB, err := stub.GetState(dhpCompKey)
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Error retrieving DHP from ledger: %s", err))
+	}
+	if len(dhpB) == 0 {
+		return shim.Error(fmt.Sprintf("DHP for (%s, %s) not found / empty: %s", patient, method, err))
 	}
 	dhp := Dhp{}
 	if err := json.Unmarshal(dhpB, &dhp); err != nil {
@@ -200,7 +203,6 @@ func (c *CovidPassportChaincode) VerifyResult(stub shim.ChaincodeStubInterface, 
 	})
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Error constructing response payload: %s", err))
-
 	}
 	return shim.Success(payload)
 }
