@@ -21,13 +21,13 @@ class vote {
         let election = elections[randomAccessKey];
 
         // select candidat
-        let candidats = election.candidats;
+        let candidates = election.candidates;
 
         do{
-            randomAccessKey = utils.getRandomInt(candidats.length);
+            randomAccessKey = utils.getRandomInt(candidates.length);
         } while(candidats[randomAccessKey] === undefined);
 
-        let candidat = candidats[randomAccessKey];
+        let candidat = candidates[randomAccessKey];
 
         // select voter
         let voters = seeds.voters;
