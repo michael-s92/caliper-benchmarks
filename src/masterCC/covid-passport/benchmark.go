@@ -16,6 +16,22 @@ func (c *CovidPassportChaincode) InitLedger(stub shim.ChaincodeStubInterface) pb
 		}
 	}
 
+	if err := loadSeeds(); err != nil {
+		return shim.Error(fmt.Sprintf("Error seeding DHP: %s", err))
+	}
+
+	for _, dhp := range seeds.ValidDhps {
+		dhp1 := dhp
+		dhp1B, err := json.Marshal(&dhp1)
+		if err != nil {
+			return shim.Error(fmt.Sprintf("Error marshaling dhp1: %s", err))
+		}
+		resp := c.UploadDhp(stub, []string{string(dhp1B)})
+		if resp.Status != shim.OK {
+			return resp
+		}
+	}
+
 	return shim.Success(nil)
 }
 
