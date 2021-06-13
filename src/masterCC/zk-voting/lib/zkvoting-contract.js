@@ -13,13 +13,8 @@ const seeds = require('./seeds.json');
 const sha512 = require('js-sha512');
 
 const Helper = require('./helper');
-/*
-const { ArticleSubmittedEvent, DoReviewEvent, ReviewDoneEvent } = require('./chaincode_events');
-const Helper = require('./helper');
 
-const authorTitleIndexName = "author~title";
-const authorTitleReviewingIndexName = "author~title~reviewing";
-*/
+
 class ZKVotingContract extends Contract {
 
     async init(ctx) {
@@ -196,6 +191,27 @@ class ZKVotingContract extends Contract {
 
     async getResults(ctx, electionId) {
 
+        Helper.throwErrorIfStringIsEmpty(electionId);
+
+        // check electionId
+        let electionAsBytes = await ctx.stub.getState(electionId);
+        if (!Helper.objExists(electionAsBytes)) {
+            throw new Error(`Election ${electionId} doesnt exist`);
+        }
+
+        let electionjson = {};
+        try {
+            electionjson = JSON.parse(electionAsBytes.toString());
+        } catch (err) {
+            throw new Error(`Failed to parse Election ${electionjson}, err: ${err}`);
+        }
+        let election = Election.fromJSON(electionjson);
+
+        let result = {
+            election_id: electionId,
+            results: election.getResults()
+        };
+        return JSON.stringify(result);
 
     }
 

@@ -36,6 +36,37 @@ class Election {
         }
     }
 
+    // x power on something gives y
+    static getBaseLog(x, y) {
+        return Math.log(y) / Math.log(x);
+    }
+
+    getResults(){
+
+        let results = {};
+
+        this.votes.forEach(v => {
+            
+            let ind = getBaseLog(2, v.vote);
+            let cand = this.candidates[ind];
+
+            if(cand !== undefined){
+
+                let vkey = results.get(cand);
+                if(vkey === undefined){
+
+                    results.set(cand, 1);
+                } else {
+
+                    results.set(cand, vkey + 1);
+                }
+            }
+        });
+
+
+        return results;
+    }
+
 }
 
 module.exports = Election;
