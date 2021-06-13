@@ -6,6 +6,7 @@
 
 const { Contract } = require('fabric-contract-api');
 const Election = require('./election');
+const Vote = require('./vote');
 const Admins = require('./admins');
 
 const seeds = require('./seeds.json');
@@ -162,9 +163,35 @@ class ZKVotingContract extends Contract {
 
     }
 
-    async vote(ctx, electionId, voterId, voteIndex) {
+    async vote(ctx, electionId, voterId, candidat) {
 
+        Helper.throwErrorIfStringIsEmpty(electionId);
+        Helper.throwErrorIfStringIsEmpty(voterId);
+        Helper.throwErrorIfStringIsEmpty(candidat);
 
+        // check electionId
+        let electionAsBytes = await ctx.stub.getState(electionId);
+        if (!Helper.objExists(electionAsBytes)) {
+            throw new Error(`Election ${electionId} doesnt exist`);
+        }
+
+        let electionjson = {};
+        try {
+            electionjson = JSON.parse(electionAsBytes.toString());
+        } catch (err) {
+            throw new Error(`Failed to parse Election ${electionjson}, err: ${err}`);
+        }
+        let election = Election.fromJSON(electionjson);
+
+        let voteInd = election.candidates.findIndex(c => c === candidat);
+        if(voteInd === -1 ){
+            throw new Error("Unsupported voting - candidat error");
+        }
+
+        let myvote = new Vote(electionId, voterId, voteInd);
+        election.storeVote(myvote);
+
+        await ctx.stub.putState(electionId, Buffer.from(JSON.stringify(election)));
     }
 
     async getResults(ctx, electionId) {
@@ -178,14 +205,6 @@ class ZKVotingContract extends Contract {
     }
 
     async voteOK(ctx, electionId, voterId) {
-
-        if (electionId.length <= 0) {
-            throw new Error("electionId must be non-empty string");
-        }
-
-        if (voterId.length <= 0) {
-            throw new Error("voterId must be non-empty string");
-        }
 
 
     }

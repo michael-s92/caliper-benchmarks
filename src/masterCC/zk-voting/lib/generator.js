@@ -13,6 +13,7 @@ const parameters = read.sync('seedParameters.yaml');
 let admins = [];
 let initElections = [];
 let newElections = [];
+let voters = [];
 
 function generateAdmin(index) {
 
@@ -44,6 +45,10 @@ for (let i = 0; i < parameters.admins; i++) {
     admins.push(generateAdmin(i));
 }
 
+for (let i = 0; i < parameters.number_voters; i++) {
+    voters.push(Utils.generateRandomWord(20));
+}
+
 for (let i = 0; i < parameters.init_elections; i++) {
     initElections.push(generateElection(i, 'Init'));
 }
@@ -55,7 +60,8 @@ for (let i = 0; i < parameters.new_elections; i++) {
 const json = JSON.stringify({
     admins: admins,
     initElections: initElections,
-    newElections: newElections
+    newElections: newElections,
+    voters: voters
 }, null, 4);
 
 

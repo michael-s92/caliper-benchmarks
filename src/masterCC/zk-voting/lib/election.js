@@ -6,7 +6,7 @@ const docType = "election-doc";
 
 class Election {
 
-    constructor(id, candidates, votes, isClosed){
+    constructor(id, candidates, votes, isClosed) {
         this.docType = docType;
         this.id = id;
         this.candidates = (candidates === undefined) ? [] : candidates;
@@ -14,18 +14,26 @@ class Election {
         this.isClosed = (isClosed === undefined) ? false : votes;
     }
 
-    static fromJSON(obj){
-        if(obj.id !== undefined && obj.candidates !== undefined && obj.votes !== undefined){
+    static fromJSON(obj) {
+        if (obj.id !== undefined && obj.candidates !== undefined && obj.votes !== undefined) {
             return new Election(obj.id, obj.candidates, obj.votes, obj.isClosed);
         }
     }
 
-    close(){
+    close() {
         this.isClosed = true;
     }
 
-    getCandidates(){
+    getCandidates() {
         return Utils.shuffle(this.candidates);
+    }
+
+    storeVote(myvote) {
+
+        let ind = this.votes.findIndex(v => v.voterId === myvote.voterId);
+        if (ind !== -1) {
+            this.votes.push(myvote);
+        }
     }
 
 }
