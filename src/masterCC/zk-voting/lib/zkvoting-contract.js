@@ -12,9 +12,6 @@ const seeds = require('./seeds.json');
 const sha512 = require('js-sha512');
 
 /*
-const Article = require('./article');
-const { Author, Editor, Reviewer } = require('./users');
-const ReviewingProcess = require('./reviewing_process');
 const { ArticleSubmittedEvent, DoReviewEvent, ReviewDoneEvent } = require('./chaincode_events');
 const Helper = require('./helper');
 
@@ -34,13 +31,19 @@ class ZKVotingContract extends Contract {
     async initLedger(ctx) {
         console.info("InitLedger Transaction Invoked");
 
+        // save admins
         for (const adm of seeds.admins) {
             let hashedKey = sha512(adm.key);
             let objAdmin = new Admins(adm.id, hashedKey);
             await ctx.stub.putState(adm.id, Buffer.from(JSON.stringify(objAdmin)));
         }
 
+        // save elections
+        for (const e of seeds.initElections) {
 
+            let obj = new Election(e.id, e.candidates);
+            await ctx.stub.putState(e.id, Buffer.from(JSON.stringify(obj)));
+        }
 
     }
 
@@ -56,22 +59,22 @@ class ZKVotingContract extends Contract {
 
     async getCandidates(ctx, electionId) {
 
-        
+
     }
 
     async vote(ctx, electionId, voterId, voteIndex) {
 
-        
+
     }
 
     async getResults(ctx, electionId) {
 
-        
+
     }
 
     async hasVoted(ctx, electionId, voterId) {
-        
-        
+
+
     }
 
     async voteOK(ctx, electionId, voterId) {
@@ -83,7 +86,7 @@ class ZKVotingContract extends Contract {
         if (voterId.length <= 0) {
             throw new Error("voterId must be non-empty string");
         }
-        
+
 
     }
 }
