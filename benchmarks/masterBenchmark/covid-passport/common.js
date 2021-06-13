@@ -43,7 +43,7 @@ module.exports.run = function () {
         //console.info('--------------------------- TRANSACTION TO BE INVOKED: ' + ALLTESTCASE[uniformPick]);
 
         let args = ALLTESTCASE[testPick].get();
-        let txstatus = bc.invokeSmartContract(contx, 'zk-voting', 'v1', args, 120);
+        let txstatus = bc.invokeSmartContract(contx, 'covid-passport', 'v1', args, 120);
 
         //console.info('TRANSACTION STATUS');
 
