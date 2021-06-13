@@ -41,7 +41,7 @@ class Utils {
         
         let result = [];
         for(let i = 0; i < len; i++) {
-            let tmp = "C" + i + ": " + this.generateRandomWord;
+            let tmp = "C" + i + ": " + this.generateRandomWord(10);
             result.push(tmp);
         }
 
