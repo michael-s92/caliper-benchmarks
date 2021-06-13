@@ -14,8 +14,10 @@ const ALLTESTCASE = [
 ];
 
 // PROVIDE NUMBER OF TESTCASES
-let testCasePermuation = [
-        0
+let queryFunction = [
+        false,
+        false,
+        true
 ];
 
 const testCasePermuationWeighted = [
@@ -43,14 +45,19 @@ module.exports.init = function (blockchain, context, args) {
 };
 module.exports.run = function () {
 
-        const testPick = pick(testCasePermuationWeighted);
+        const testPick = 2;
+        //const testPick = pick(testCasePermuationWeighted);
         //let uniformPick = deck.pick(testCasePermuation);
         //console.info('--------------------------- TRANSACTION TO BE INVOKED: ' + ALLTESTCASE[uniformPick]);
 
-        //let args = ALLTESTCASE[testPick].get();
-        let args = ALLTESTCASE[2].get();
+        let args = ALLTESTCASE[testPick].get();
+        let txstatus;
+        if (queryFunction[testPick]) {
+                txstatus = bc.bcObj.querySmartContract(contx, 'zk-voting', 'v1', args, 120);
+        } else {
+                txstatus = bc.invokeSmartContract(contx, 'zk-voting', 'v1', args, 120);
 
-        let txstatus = bc.invokeSmartContract(contx, 'zk-voting', 'v1', args, 120);
+        }
         //console.info('TRANSACTION STATUS');
 
         txstatus.then(function (result) {
