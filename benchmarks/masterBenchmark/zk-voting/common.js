@@ -33,10 +33,13 @@ let queryFunction = [
 ];
 
 const testCasePermuationWeighted = [
-        [0, 50],
-        [1, 50],
-        [2, 250],
-        [3, 20]
+        [0, 10],
+        [1, 10],
+        [2, 5],
+        [3, 55],
+        [4, 5],
+        [5, 5],
+        [6, 10]
 ];
 
 function isDefined(t) {
@@ -57,8 +60,7 @@ module.exports.init = function (blockchain, context, args) {
 };
 module.exports.run = function () {
 
-        const testPick = 6;
-        //const testPick = pick(testCasePermuationWeighted);
+        const testPick = pick(testCasePermuationWeighted);
         //let uniformPick = deck.pick(testCasePermuation);
         //console.info('--------------------------- TRANSACTION TO BE INVOKED: ' + ALLTESTCASE[uniformPick]);
 
