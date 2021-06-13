@@ -55,6 +55,36 @@ class ZKVotingContract extends Contract {
         Helper.throwErrorIfStringIsEmpty(adminId);
         Helper.throwErrorIfStringIsEmpty(adminKey);
 
+        // check electionId
+        let foundAsBytes = await ctx.stub.getState(electionId);
+        if (Helper.objExists(foundAsBytes)) {
+            throw new Error(`Election ${electionId} already exist`);
+        }
+
+        // check admin
+        let adminAsBytes = await ctx.stub.getState(adminId);
+        if (!Helper.objExists(adminAsBytes)) {
+            throw new Error(`Admin ${adminId} doesnt exist`);
+        }
+
+        let adminjson = {};
+        try {
+            adminjson = JSON.parse(adminAsBytes.toString());
+        } catch (err) {
+            throw new Error(`Failed to parse Editor ${editorId}, err: ${err}`);
+        }
+        let admin = Admins.fromJSON(adminjson);
+
+        let hashedKey = sha512(adminKey);
+        if (hashedKey !== admin.hashedKey) {
+            console.log(`Invalid admin key for admin ${adminId}`);
+            return;
+        }
+
+        let candidatesList = JSON.parse(candidates);
+
+        let election = new Election(electionId, candidatesList);
+        await ctx.stub.putState(electionId, Buffer.from(JSON.stringify(election)));
     }
 
     async closeElection(ctx, electionId, adminId, adminKey) {
