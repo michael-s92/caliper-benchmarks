@@ -84,7 +84,7 @@ class EurekaContract extends Contract {
             await ctx.stub.putState(authorTitleReviewingIndexKey, Buffer.from(JSON.stringify(reviewingObj)));
         }
 
-        throw new Error(JSON.stringify(tm));
+        throw new Error(JSON.stringify(tmp));
          //process of reviewing for closing
          for (const reviewing of seeds.reviewerForClosing) {
 
