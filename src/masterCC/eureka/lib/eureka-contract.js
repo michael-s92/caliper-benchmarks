@@ -333,7 +333,7 @@ class EurekaContract extends Contract {
             }
         };
 
-        resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
+        let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
         let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}`);
 
         if(reviewProcess.reviewDoneFrom(reviewerId)){
