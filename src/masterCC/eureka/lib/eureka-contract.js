@@ -299,7 +299,7 @@ class EurekaContract extends Contract {
 
         //check if reviewingProcess exists and if review has right to review that article
         let reviewingProcessQueryString = {};
-        reviewingProcessQueryString.selector = {
+        /*reviewingProcessQueryString.selector = {
             docType: ReviewingProcess.getDocType(),
             title: title,
             author_id: authorId,
@@ -318,7 +318,7 @@ class EurekaContract extends Contract {
 
         let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
         await Helper.throwErrorIfQueryResultIsNotEmpty(resultIterator, `Review not possible; Reviewer: ${reviewerId}, Title: ${title}, Author: ${authorId}`);
-
+*/
         //get review process from ledger
         reviewingProcessQueryString = {};
         reviewingProcessQueryString.selector = {
@@ -335,6 +335,11 @@ class EurekaContract extends Contract {
 
         resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
         let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}`);
+
+        if(reviewProcess.reviewDoneFrom(reviewerId)){
+            throw new Error("Review already done");
+        }
+
 
         //store review
         //reviewProcess.saveReview(reviewerId, mark, comment);
@@ -395,8 +400,8 @@ class EurekaContract extends Contract {
             }
         };
 
-        const { resultIterator, metadata } = await ctx.stub.getQueryResultWithPagination(JSON.stringify(reviewingProcessQueryString), 2);
-        //let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
+        //const { resultIterator, metadata } = await ctx.stub.getQueryResultWithPagination(JSON.stringify(reviewingProcessQueryString), 2);
+        let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
         let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Get ReviewProcess Error; Title: ${title}, Author: ${authorId}`);
 
         //close process and calculate mark
