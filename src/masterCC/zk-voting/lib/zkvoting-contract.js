@@ -71,7 +71,7 @@ class ZKVotingContract extends Contract {
         try {
             adminjson = JSON.parse(adminAsBytes.toString());
         } catch (err) {
-            throw new Error(`Failed to parse Editor ${editorId}, err: ${err}`);
+            throw new Error(`Failed to parse Admin ${adminId}, err: ${err}`);
         }
         let admin = Admins.fromJSON(adminjson);
 

@@ -35,7 +35,7 @@ class configureElection {
         // configureElection(ctx, electionId, candidates, adminId, adminKey)
 	    args = {
                 chaincodeFunction: 'configureElection',
-                chaincodeArguments: [electionId, election.candidates, admin.id, admin.key]
+                chaincodeArguments: [electionId, JSON.stringify(election.candidates), admin.id, admin.key]
             };
 
 	    return args;
