@@ -89,7 +89,51 @@ class ZKVotingContract extends Contract {
 
     async closeElection(ctx, electionId, adminId, adminKey) {
 
+        Helper.throwErrorIfStringIsEmpty(electionId);
+        Helper.throwErrorIfStringIsEmpty(adminId);
+        Helper.throwErrorIfStringIsEmpty(adminKey);
 
+        // check admin
+        let adminAsBytes = await ctx.stub.getState(adminId);
+        if (!Helper.objExists(adminAsBytes)) {
+            throw new Error(`Admin ${adminId} doesnt exist`);
+        }
+
+        let adminjson = {};
+        try {
+            adminjson = JSON.parse(adminAsBytes.toString());
+        } catch (err) {
+            throw new Error(`Failed to parse Admin ${adminId}, err: ${err}`);
+        }
+        let admin = Admins.fromJSON(adminjson);
+
+        let hashedKey = sha512(adminKey);
+        if (hashedKey !== admin.hashedKey) {
+            console.log(`Invalid admin key for admin ${adminId}`);
+            return;
+        }
+
+        // check electionId
+        let electionAsBytes = await ctx.stub.getState(electionId);
+        if (!Helper.objExists(electionAsBytes)) {
+            throw new Error(`Election ${electionId} doesnt exist`);
+        }
+
+        let electionjson = {};
+        try {
+            electionjson = JSON.parse(electionAsBytes.toString());
+        } catch (err) {
+            throw new Error(`Failed to parse Election ${electionjson}, err: ${err}`);
+        }
+        let election = Election.fromJSON(electionjson);
+
+        if(election.isClosed){
+            console.log("Election already closed");
+            return;
+        }
+
+        election.close();
+        await ctx.stub.putState(electionId, Buffer.from(JSON.stringify(election)));
     }
 
     async getCandidates(ctx, electionId) {

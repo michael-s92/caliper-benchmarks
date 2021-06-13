@@ -1,12 +1,14 @@
 'use strict';
 
 const configureElection = require('./configureElection');
+const closeElection = require('./closeElection');
 
 const pick = require('pick-random-weighted');
 var deck = require('deck');
 
 const ALLTESTCASE = [
-        configureElection
+        configureElection,
+        closeElection
 ];
 
 // PROVIDE NUMBER OF TESTCASES
@@ -44,7 +46,7 @@ module.exports.run = function () {
         //console.info('--------------------------- TRANSACTION TO BE INVOKED: ' + ALLTESTCASE[uniformPick]);
 
         //let args = ALLTESTCASE[testPick].get();
-        let args = ALLTESTCASE[0].get();
+        let args = ALLTESTCASE[1].get();
 
         let txstatus = bc.invokeSmartContract(contx, 'zk-voting', 'v1', args, 120);
         //console.info('TRANSACTION STATUS');

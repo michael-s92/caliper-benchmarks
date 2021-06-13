@@ -17,6 +17,10 @@ class Election {
             return new Election(obj.id, obj.candidates, obj.votes, obj.isClosed);
         }
     }
+
+    close(){
+        this.isClosed = true;
+    }
 }
 
 module.exports = Election;
