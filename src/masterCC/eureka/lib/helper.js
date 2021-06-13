@@ -12,9 +12,12 @@ class Helper {
         let allResults = [];
         let res;
         while(true){
-            res = await iterator.next();
+            try{
+                res = await iterator.next();
+            } catch(err){
+                throw new Error("Iterator.NEXT error");
+            }
             
-            throw new Error("if: " + JSON.stringify(res));
             if(res.value && res.value.value.toString()){
                 try{
                     let json = JSON.parse(res.value.value.toString('utf8'));
