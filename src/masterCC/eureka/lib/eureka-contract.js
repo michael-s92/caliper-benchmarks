@@ -314,8 +314,8 @@ class EurekaContract extends Contract {
         let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
 
         //-------------------------------
-        let authorTitleReviewingIndexKey = await ctx.stub.createCompositeKey(authorTitleReviewingIndexName, [authorId, title, "reviewing"]);
-        let foundAsByter = await ctx.stub.getState(authorTitleReviewingIndexKey);
+        let processCompositeKey = await ctx.stub.createCompositeKey(authorTitleReviewingIndexName, [authorId, title, "reviewing"]);
+        let foundAsByter = await ctx.stub.getState(processCompositeKey);
 
         if (!foundAsByter || !foundAsByter.toString()) {
             throw new Error(`foundAsByter doesnt exist`);
