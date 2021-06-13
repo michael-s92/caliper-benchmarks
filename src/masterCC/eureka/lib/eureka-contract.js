@@ -400,7 +400,6 @@ class EurekaContract extends Contract {
             }
         };
 
-        //const { resultIterator, metadata } = await ctx.stub.getQueryResultWithPagination(JSON.stringify(reviewingProcessQueryString), 2);
         let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
         let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Get ReviewProcess Error; Title: ${title}, Author: ${authorId}`);
 
