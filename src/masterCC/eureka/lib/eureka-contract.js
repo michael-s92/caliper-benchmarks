@@ -327,10 +327,10 @@ class EurekaContract extends Contract {
         } catch (err) {
             throw new Error(`Failed to parse found, err: ${err}`);
         }
-        let found = Editor.fromJSON(foundjson);
+        let found = ReviewingProcess.fromJSON(foundjson);
 
         //-------------------------------
-        let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}, Reviewer: ${reviewerId}, Found ${found}`);
+        let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}, Reviewer: ${reviewerId}, Found ${JSON.stringify(found)}, FoundJSON ${foundjson}`);
 
         if(reviewProcess.reviewDoneFrom(reviewerId)){
             throw new Error("Review already done");
