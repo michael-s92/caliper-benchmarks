@@ -334,7 +334,7 @@ class EurekaContract extends Contract {
         };
 
         let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
-        let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}`);
+        let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}, Reviewer: ${reviewerId}, isClosed: ${isClosed}`);
 
         if(reviewProcess.reviewDoneFrom(reviewerId)){
             throw new Error("Review already done");
