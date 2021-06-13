@@ -16,10 +16,11 @@ class Helper {
             try{
                 res = await iterator.next();
             } catch(err){
-                console.log(err);
+                throw new Error("catch: " + JSON.stringify(err));
+                //console.log(err);
                 return;
             }
-
+            throw new Error("if: " + JSON.stringify(res));
             if(res.value && res.value.value.toString()){
                 try{
                     let json = JSON.parse(res.value.value.toString('utf8'));

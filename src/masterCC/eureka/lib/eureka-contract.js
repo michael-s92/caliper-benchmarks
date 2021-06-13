@@ -300,7 +300,6 @@ class EurekaContract extends Contract {
         //let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}`);
 
         const { resultIterator, metadata } = await ctx.stub.getQueryResultWithPagination(JSON.stringify(reviewingProcessQueryString), 2);
-        throw new Error(JSON.stringify(metadata));
         if (metadata.fetched_records_count !== 1){
             throw new Error(`Review not possible; Reviewer: ${reviewerId}, Title: ${title}, Author: ${authorId}`);
         }
