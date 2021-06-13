@@ -5,6 +5,7 @@ const closeElection = require('./closeElection');
 const getCandidates = require('./getCandidates');
 const vote = require('./vote');
 const getResults = require('./getResults');
+const hasVoted = require('./hasVoted');
 
 const pick = require('pick-random-weighted');
 var deck = require('deck');
@@ -14,7 +15,8 @@ const ALLTESTCASE = [
         closeElection,
         getCandidates,
         vote,
-        getResults
+        getResults,
+        hasVoted
 ];
 
 // PROVIDE NUMBER OF TESTCASES
@@ -23,6 +25,7 @@ let queryFunction = [
         false,
         true,
         false,
+        true,
         true
 ];
 
@@ -51,7 +54,7 @@ module.exports.init = function (blockchain, context, args) {
 };
 module.exports.run = function () {
 
-        const testPick = 4;
+        const testPick = 5;
         //const testPick = pick(testCasePermuationWeighted);
         //let uniformPick = deck.pick(testCasePermuation);
         //console.info('--------------------------- TRANSACTION TO BE INVOKED: ' + ALLTESTCASE[uniformPick]);
