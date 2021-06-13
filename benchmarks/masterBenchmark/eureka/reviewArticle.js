@@ -35,8 +35,6 @@ class reviewArticle {
 
         let review = reviews[randomAccessKey];
 
-        console.log("\nReviewer: " + JSON.stringify(reviewer) + ", index: " + reviewingProcess.reviewers.findIndex(e => reviewer.id == e.id) + "\n\n");
-
         // reviewArticle(ctx, reviewerId, reviewerKey, authorId, title, mark, comment)
 	    args = {
                 chaincodeFunction: 'reviewArticle',
