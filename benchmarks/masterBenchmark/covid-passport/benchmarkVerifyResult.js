@@ -22,7 +22,7 @@ class benchmarkVerifyResult {
     static get() {
 
         let d = new Date();
-        let a = d.getHours() + d.getMinutes() + d.getSeconds()
+        let a = d.getHours() + d.getMinutes() + d.getSeconds() + "";
 
         // PurgeExpiredDhps()
 	    let args = {
