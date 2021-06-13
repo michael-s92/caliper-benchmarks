@@ -288,6 +288,29 @@ class EurekaContract extends Contract {
             docType: ReviewingProcess.getDocType(),
             title: title,
             author_id: authorId,
+            isClosed: false,
+            reviewer_ids: {
+                $elemMatch: {
+                    $eq: reviewerId
+                }
+            },
+            reviews: {
+                $elemMatch: {
+                    reviewer_id: reviewerId
+                }
+            }
+        };
+
+        let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
+        await Helper.throwErrorIfQueryResultIsNotEmpty(resultIterator, `Review not possible; Reviewer: ${reviewerId}, Title: ${title}, Author: ${authorId}`);
+
+        //get review process from ledger
+        reviewingProcessQueryString = {};
+        reviewingProcessQueryString.selector = {
+            docType: ReviewingProcess.getDocType(),
+            title: title,
+            author_id: authorId,
+            isClosed: false,
             reviewer_ids: {
                 $elemMatch: {
                     $eq: reviewerId
@@ -295,39 +318,19 @@ class EurekaContract extends Contract {
             }
         };
 
-        //resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
-        //let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}`);
-
-        let response = await ctx.stub.getQueryResultWithPagination(JSON.stringify(reviewingProcessQueryString), 2);
-        const { resultIterator, metadata } = response;
-        if (metadata.fetched_records_count !== 1){
-            throw new Error(`Review not possible; Reviewer: ${reviewerId}, Title: ${title}, Author: ${authorId}`);
-        }
-        if(resultIterator === undefined){
-            throw new Error("resultIterator nije definisan");
-        }
-
-        let tmp = await Helper.getAllResults(resultIterator);
-        let reviewProcess = tmp[0];
-        throw new Error("Contain: " + JSON.stringify(tmp));
-        /*
-
-        let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Get ReviewProcess Error; Title: ${title}, Author: ${authorId}`);
-
-        //check if review is already given
-        if(reviewProcess.reviewDoneFrom(reviewerId)){
-            throw new Error('Review already done');
-        }
+        resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
+        let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}`);
 
         //store review
-        reviewProcess.saveReview(reviewerId, mark, comment);
+        //reviewProcess.saveReview(reviewerId, mark, comment);
+        reviewProcess.saveReview("dummyId", mark, comment);
 
         let authorTitleReviewingIndexKey = await ctx.stub.createCompositeKey(authorTitleReviewingIndexName, [authorId, title, "reviewing"]);
         await ctx.stub.putState(authorTitleReviewingIndexKey, Buffer.from(JSON.stringify(reviewProcess)));
 
         //send event to editor that review is done
         let payload = new ReviewDoneEvent(authorId, title, reviewProcess.editor.id);
-        ctx.stub.setEvent('review_done_event', Buffer.from(JSON.stringify(payload)));*/
+        ctx.stub.setEvent('review_done_event', Buffer.from(JSON.stringify(payload)));
     }
 
     async closeReviewingOfArticle(ctx, editorId, editorKey, authorId, title) {
