@@ -74,8 +74,10 @@ func (c *CovidPassportChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Res
 		return c.InitLedger(stub)
 	} else if function == "doNothing" {
 		return c.DoNothing(stub)
-	} else if function == "testUploadDhpValid" {
-		return c.TestUploadDhpValid(stub)
+	} else if function == "benchmarkUploadDhpValid" {
+		return c.BenchmarkUploadDhpValid(stub, args)
+	} else if function == "benchmarkVerifyResult" {
+		return c.BenchmarkVerifyResult(stub, args)
 	}
 
 	fmt.Println("invoke did not find func: " + function) //error
