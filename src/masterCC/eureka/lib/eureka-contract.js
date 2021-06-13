@@ -70,17 +70,21 @@ class EurekaContract extends Contract {
 
             let reviews = [];
             let reviewers_id = reviewing.reviewers.map(e => e.id);
-            tmp.push({
-                author: reviewing.author_id, 
-                title: reviewing.title,
-                reviewers: reviewers_id
-            });
+        
             let hashedKey = sha512(reviewing.editor.key);
             let editor = new Editor(reviewing.editor.id, reviewing.editor.name, hashedKey);
 
             let authorTitleReviewingIndexKey = await ctx.stub.createCompositeKey(authorTitleReviewingIndexName, [reviewing.author_id, reviewing.title, "reviewing"]);
 
             let reviewingObj = new ReviewingProcess(reviewing.author_id, reviewing.title, editor, reviewers_id, reviews, false, 0);
+
+            tmp.push({
+                author: reviewing.author_id, 
+                title: reviewing.title,
+                reviewers: reviewers_id,
+                process: reviewingObj
+            });
+
             await ctx.stub.putState(authorTitleReviewingIndexKey, Buffer.from(JSON.stringify(reviewingObj)));
         }
 
