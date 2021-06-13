@@ -11,6 +11,7 @@ const Admins = require('./admins');
 const seeds = require('./seeds.json');
 const sha512 = require('js-sha512');
 
+const Helper = require('./helper');
 /*
 const { ArticleSubmittedEvent, DoReviewEvent, ReviewDoneEvent } = require('./chaincode_events');
 const Helper = require('./helper');
@@ -53,7 +54,7 @@ class ZKVotingContract extends Contract {
         Helper.throwErrorIfStringIsEmpty(candidates);
         Helper.throwErrorIfStringIsEmpty(adminId);
         Helper.throwErrorIfStringIsEmpty(adminKey);
-        
+
     }
 
     async closeElection(ctx, electionId, adminId, adminKey) {
