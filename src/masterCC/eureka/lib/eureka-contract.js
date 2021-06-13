@@ -288,7 +288,11 @@ class EurekaContract extends Contract {
             docType: ReviewingProcess.getDocType(),
             title: title,
             author_id: authorId,
-            isClosed: false
+            reviewer_ids: {
+                $elemMatch: {
+                    $eq: reviewerId
+                }
+            }
         };
 
         //resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
@@ -300,7 +304,7 @@ class EurekaContract extends Contract {
             throw new Error(`Review not possible; Reviewer: ${reviewerId}, Title: ${title}, Author: ${authorId}`);
         }
         if(resultIterator === undefined){
-            throw new Error("iterador nije definisan");
+            throw new Error("resultIterator nije definisan");
         }
 
         let tmp = await Helper.getAllResults(resultIterator);
