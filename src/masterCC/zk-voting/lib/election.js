@@ -19,4 +19,4 @@ class Election {
     }
 }
 
-module.exports = Election
+module.exports = Election;
