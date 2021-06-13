@@ -288,12 +288,7 @@ class EurekaContract extends Contract {
             docType: ReviewingProcess.getDocType(),
             title: title,
             author_id: authorId,
-            isClosed: false,
-            reviewer_ids: {
-                $elemMatch: {
-                    $eq: reviewerId
-                }
-            }
+            isClosed: false
         };
 
         //resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
