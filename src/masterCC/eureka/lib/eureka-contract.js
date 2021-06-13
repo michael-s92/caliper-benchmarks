@@ -330,7 +330,7 @@ class EurekaContract extends Contract {
         let found = ReviewingProcess.fromJSON(foundjson);
 
         //-------------------------------
-        let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}, Reviewer: ${reviewerId}, Found ${JSON.stringify(found)}, FoundJSON ${foundjson}`);
+        let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}, Reviewer: ${reviewerId}, Found ${JSON.stringify(found)}, FoundJSON ${JSON.stringify(foundjson)}`);
 
         if(reviewProcess.reviewDoneFrom(reviewerId)){
             throw new Error("Review already done");
