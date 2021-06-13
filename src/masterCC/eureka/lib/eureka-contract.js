@@ -299,9 +299,13 @@ class EurekaContract extends Contract {
         //resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
         //let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}`);
 
-        const { resultIterator, metadata } = await ctx.stub.getQueryResultWithPagination(JSON.stringify(reviewingProcessQueryString), 2);
+        let response = await ctx.stub.getQueryResultWithPagination(JSON.stringify(reviewingProcessQueryString), 2);
+        const { resultIterator, metadata } = response;
         if (metadata.fetched_records_count !== 1){
             throw new Error(`Review not possible; Reviewer: ${reviewerId}, Title: ${title}, Author: ${authorId}`);
+        }
+        if(resultIterator === undefined){
+            throw new Error("iterador nije definisan");
         }
 
         let tmp = await Helper.getAllResults(resultIterator);
