@@ -255,7 +255,7 @@ class EurekaContract extends Contract {
         ctx.stub.setEvent('do_review_event', Buffer.from(JSON.stringify(payload)));
     }
 
-    async reviewArticle(ctx, reviewerId, reviewerKey, authorId, title, mark, comment) {
+    async reviewArticleQuery(ctx, reviewerId, reviewerKey, authorId, title, mark, comment) {
 
         //check all inputs
         if (reviewerId.length <= 0) {
@@ -314,8 +314,69 @@ class EurekaContract extends Contract {
         };
 
         let resultIterator = await ctx.stub.getQueryResult(JSON.stringify(reviewingProcessQueryString));
+        let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}, Reviewer: ${reviewerId}, Found ${JSON.stringify(found)}, FoundJSON ${JSON.stringify(foundjson)}`);
 
-        //-------------------------------
+        if (reviewProcess.reviewDoneFrom(reviewerId)) {
+            throw new Error("Review already done");
+        }
+
+
+        //store review
+        //reviewProcess.saveReview(reviewerId, mark, comment);
+        reviewProcess.saveReview("dummyId", mark, comment);
+
+        let authorTitleReviewingIndexKey = await ctx.stub.createCompositeKey(authorTitleReviewingIndexName, [authorId, title, "reviewing"]);
+        await ctx.stub.putState(authorTitleReviewingIndexKey, Buffer.from(JSON.stringify(reviewProcess)));
+
+        //send event to editor that review is done
+        let payload = new ReviewDoneEvent(authorId, title, reviewProcess.editor.id);
+        ctx.stub.setEvent('review_done_event', Buffer.from(JSON.stringify(payload)));
+    }
+
+    async reviewArticle(ctx, reviewerId, reviewerKey, authorId, title, mark, comment) {
+
+        //check all inputs
+        if (reviewerId.length <= 0) {
+            throw new Error("reviewerId must be non-empty string");
+        }
+        if (reviewerKey.length <= 0) {
+            throw new Error("reviewerKey must be non-empty string");
+        }
+        if (authorId.length <= 0) {
+            throw new Error("authorId must be non-empty string");
+        }
+        if (title.length <= 0) {
+            throw new Error("title must be non-empty string");
+        }
+        if (mark.length <= 0) {
+            throw new Error("mark must be non-empty string");
+        } else if (isNaN(mark)) {
+            throw new Error("mark must be a numeric string");
+        }
+        if (comment.length <= 0) {
+            throw new Error("comment must be non-empty string");
+        }
+
+        //check reviewer with key
+        let reviewerAsBytes = await ctx.stub.getState(reviewerId);
+        if (!Helper.objExists(reviewerAsBytes)) {
+            throw new Error(`Reviewer ${reviewerId} doesnt exist`);
+        }
+
+        let reviewerJson = {};
+        try {
+            reviewerJson = JSON.parse(reviewerAsBytes.toString());
+        } catch (err) {
+            throw new Error(`Failed to parse Reviewer ${reviewerId}, err: ${err}`);
+        }
+        let reviewer = Reviewer.fromJSON(reviewerJson);
+
+        let hashedKey = sha512(reviewerKey);
+        if (hashedKey !== reviewer.hashedKey) {
+            console.log(`Invalid reviewer key for reviewerId ${reviewerId}`);
+            return;
+        }
+
         let processCompositeKey = await ctx.stub.createCompositeKey(authorTitleReviewingIndexName, [authorId, title, "reviewing"]);
         let foundAsByter = await ctx.stub.getState(processCompositeKey);
 
@@ -329,16 +390,11 @@ class EurekaContract extends Contract {
         } catch (err) {
             throw new Error(`Failed to parse found, err: ${err}`);
         }
-        let found = ReviewingProcess.fromJSON(foundjson);
-
-        //-------------------------------
-        let reviewProcess = found;
-        //let reviewProcess = await Helper.onlyOneResultOrThrowError(resultIterator, `Review: Get ReviewProcess Error; Title: ${title}, Author: ${authorId}, Reviewer: ${reviewerId}, Found ${JSON.stringify(found)}, FoundJSON ${JSON.stringify(foundjson)}`);
+        let reviewProcess = ReviewingProcess.fromJSON(foundjson);
 
         if (reviewProcess.reviewDoneFrom(reviewerId)) {
             throw new Error("Review already done");
         }
-
 
         //store review
         //reviewProcess.saveReview(reviewerId, mark, comment);

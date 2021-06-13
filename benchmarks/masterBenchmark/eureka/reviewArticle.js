@@ -36,6 +36,7 @@ class reviewArticle {
         let review = reviews[randomAccessKey];
 
         // reviewArticle(ctx, reviewerId, reviewerKey, authorId, title, mark, comment)
+        // second transaction posible: reviewArticleQuery
 	    args = {
                 chaincodeFunction: 'reviewArticle',
                 chaincodeArguments: [reviewer.id, reviewer.key, reviewingProcess.author_id, reviewingProcess.title, review.mark, review.comment]
