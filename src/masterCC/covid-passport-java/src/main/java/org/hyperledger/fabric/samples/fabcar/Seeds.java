@@ -91,7 +91,7 @@ public final class Seeds {
     }
 
     public static Seeds loadSeeds() throws IOException {
-        JSONObject seedsJson = readJsonFromUrl("storage.googleapis.com/milan-thesis-21/covid-passport/seeds-3x30.json");
+        JSONObject seedsJson = readJsonFromUrl("https://storage.googleapis.com/milan-thesis-21/covid-passport/seeds-3x30.json");
         return genson.deserialize(seedsJson.toString(), Seeds.class);
     }
 }
