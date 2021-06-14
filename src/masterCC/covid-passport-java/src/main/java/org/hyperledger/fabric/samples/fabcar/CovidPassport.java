@@ -54,7 +54,7 @@ public final class CovidPassport implements ContractInterface {
 
     @Transaction()
     public void initLedger(final Context ctx) throws Exception {
-    	throw new java.lang.Error("this is very bad");
+    	throw new java.lang.RuntimeException("this is very bad");
 
         ChaincodeStub stub = ctx.getStub();
         Seeds seeds = Seeds.loadSeeds();
