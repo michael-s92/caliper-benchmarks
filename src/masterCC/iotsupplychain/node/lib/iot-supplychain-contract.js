@@ -121,7 +121,9 @@ class IoTSupplychainContract extends Contract {
 
         // check if there is no LabResults
         if (batch.labResult !== undefined) {
-            throw new Error(`Batch ${batchId} already has labResults`);
+            //throw new Error(`Batch ${batchId} already has labResults`);
+            console.log(`Batch ${batchId} already has labResults`);
+            return;
         }
 
         // store LabResults
