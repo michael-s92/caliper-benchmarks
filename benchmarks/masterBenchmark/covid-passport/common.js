@@ -1,15 +1,15 @@
 'use strict';
 
-const benchmarkUploadDhpValid = require('./benchmarkUploadDhpValid');
-const benchmarkVerifyResult = require('./benchmarkVerifyResult');
+const uploadDhp = require('./uploadDhp');
+const verifyResult = require('./verifyResult');
 const PurgeExpiredDhps = require('./PurgeExpiredDhps');
 
 const pick = require('pick-random-weighted');
 var deck = require('deck');
 
 const ALLTESTCASE = [
-        benchmarkUploadDhpValid,
-        benchmarkVerifyResult,
+        uploadDhp,
+        verifyResult,
         PurgeExpiredDhps
 ];
 
@@ -41,7 +41,7 @@ module.exports.run = function () {
         const testPick = pick(testCasePermuationWeighted);
         //let uniformPick = deck.pick(testCasePermuation);
         //console.info('--------------------------- TRANSACTION TO BE INVOKED: ' + ALLTESTCASE[uniformPick]);
-
+        console.log("\nINPUT: " + testPick + "\n\n");
         let args = ALLTESTCASE[testPick].get();
         let txstatus = bc.invokeSmartContract(contx, 'covid-passport', 'v1', args, 120);
 

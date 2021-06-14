@@ -16,18 +16,27 @@
 
 'use strict';
 
+const seeds = require('./seeds-3x30.json');
+const Utils = require('./utils');
 
-class benchmarkVerifyResult {
+class verifyResult {
 
     static get() {
 
-        let d = new Date();
-        let a = d.getHours() + d.getMinutes() + d.getSeconds() + "";
+        let dhps = seeds.validDHPs;
 
-        // PurgeExpiredDhps()
+        let randomAccessKey;
+        do{
+            randomAccessKey = Utils.getRandomInt(dhps.length);
+        } while(dhps[randomAccessKey] === undefined);
+
+        let dhp = dhps[randomAccessKey];
+
+
+        // verifyResult(final Context ctx, final String patient, final String method)
 	    let args = {
-                chaincodeFunction: 'benchmarkVerifyResult',
-                chaincodeArguments: [a]
+                chaincodeFunction: 'verifyResult',
+                chaincodeArguments: [dhp.data.patient, dhp.data.method]
             };
 
 	    return args;
@@ -35,7 +44,7 @@ class benchmarkVerifyResult {
 	}
 }
 
-module.exports = benchmarkVerifyResult;
+module.exports = verifyResult;
 
 
 
