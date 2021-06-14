@@ -36,7 +36,7 @@ import org.joda.time.DateTime;
 @Default
 public final class CovidPassport implements ContractInterface {
 
-    private final Genson genson = new Genson();
+    private final Genson genson = JsonConverters.Genson();
 
     /**
      * Placeholder for init function

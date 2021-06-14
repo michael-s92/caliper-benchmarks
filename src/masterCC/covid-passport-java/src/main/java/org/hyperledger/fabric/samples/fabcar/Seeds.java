@@ -29,7 +29,8 @@ import java.util.Objects;
 @DataType()
 public final class Seeds {
 
-    private static final Genson genson = new Genson();
+    public static final String HOSTED_SEEDS_URL = "https://storage.googleapis.com/milan-thesis-21/covid-passport/seeds-3x30.json";
+    private static final Genson genson = JsonConverters.Genson();
 
     @Property
     private final SeedTestFacility[] testFacilities;
@@ -91,7 +92,7 @@ public final class Seeds {
     }
 
     public static Seeds loadSeeds() throws IOException {
-        JSONObject seedsJson = readJsonFromUrl("https://storage.googleapis.com/milan-thesis-21/covid-passport/seeds-3x30.json");
+        JSONObject seedsJson = readJsonFromUrl(Seeds.HOSTED_SEEDS_URL);
         return genson.deserialize(seedsJson.toString(), Seeds.class);
     }
 }
