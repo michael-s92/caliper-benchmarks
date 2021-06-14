@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"strconv"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -84,7 +85,14 @@ func (c *CovidPassportChaincode) BenchmarkVerifyResult(stub shim.ChaincodeStubIn
 		return shim.Error(fmt.Sprintf("Error seeding DHP: %s", err))
 	}
 
-	dhp1 := seeds.ValidDhps[ix%len(seeds.ValidDhps)]
+	// Add a 10% probability to use partial composite key query with multiple results
+	apx := math.Max(1, float64(len(seeds.ValidDhps)/10))
+	rn := ix % (len(seeds.ValidDhps) + int(apx))
+	if rn < len(seeds.ValidDhps) {
+		dhp1 := seeds.ValidDhps[rn]
+		return c.VerifyResult(stub, []string{string(dhp1.Data.Patient), string(dhp1.Data.Method)})
+	}
 
-	return c.VerifyResult(stub, []string{string(dhp1.Data.Patient), string(dhp1.Data.Method)})
+	dhp1 := seeds.ValidDhps[ix%len(seeds.ValidDhps)]
+	return c.VerifyResult(stub, []string{string(dhp1.Data.Patient), "*"})
 }
