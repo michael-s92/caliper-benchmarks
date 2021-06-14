@@ -10,16 +10,19 @@ import (
 )
 
 func (c *CovidPassportChaincode) InitLedger(stub shim.ChaincodeStubInterface) pb.Response {
-	for id, tfkey := range TfKeys {
-		if err := GenerateTestFacility(stub, id, tfkey); err != nil {
-			return shim.Error(err.Error())
+	// Load Seeds
+	if err := loadSeeds(); err != nil {
+		return shim.Error(fmt.Sprintf("Error loading seeds: %s", err))
+	}
+
+	// Init Test Facilities
+	for _, tf := range seeds.TestFacilities {
+		if err := stub.PutState(tf.Id, []byte(tf.PublicKey)); err != nil {
+			return shim.Error(fmt.Sprintf("Error persisting Test Facility %s on ledger: %s", tf.Id, err))
 		}
 	}
 
-	if err := loadSeeds(); err != nil {
-		return shim.Error(fmt.Sprintf("Error seeding DHP: %s", err))
-	}
-
+	// Init DHPs
 	for _, dhp := range seeds.ValidDhps {
 		dhp1 := dhp
 		dhp1B, err := json.Marshal(&dhp1)
@@ -27,7 +30,10 @@ func (c *CovidPassportChaincode) InitLedger(stub shim.ChaincodeStubInterface) pb
 			return shim.Error(fmt.Sprintf("Error marshaling dhp: %s", err))
 		}
 
-		dhpCompKey := string(dhp1.Data.Patient) + string(dhp1.Data.Method)
+		dhpCompKey, err := DhpCompositeKey(stub, string(dhp1.Data.Patient), string(dhp1.Data.Method))
+		if err != nil {
+			return shim.Error(fmt.Sprintf("Error determining composite key for DHP: %s", err))
+		}
 		if err := stub.PutState(dhpCompKey, dhp1B); err != nil {
 			return shim.Error(fmt.Sprintf("Error storing dhp: %s", err))
 		}

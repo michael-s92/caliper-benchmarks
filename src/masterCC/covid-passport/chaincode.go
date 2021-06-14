@@ -96,6 +96,7 @@ func (c *CovidPassportChaincode) PurgeExpiredDhps(stub shim.ChaincodeStubInterfa
 		return shim.Error(fmt.Sprintf("Error retrieving chaincode world state: %s", err))
 	}
 	defer wstate.Close()
+	now := time.Now()
 	for wstate.HasNext() {
 		kv, err := wstate.Next()
 		if err != nil {
@@ -109,8 +110,11 @@ func (c *CovidPassportChaincode) PurgeExpiredDhps(stub shim.ChaincodeStubInterfa
 		}
 
 		// Delete if expired
-		if dhp.Data.Date.After(dhp.Data.ExpiryDate) {
-			dhpCompKey := string(dhp.Data.Patient) + string(dhp.Data.Method)
+		if now.After(dhp.Data.ExpiryDate) {
+			dhpCompKey, err := DhpCompositeKey(stub, string(dhp.Data.Patient), string(dhp.Data.Method))
+			if err != nil {
+				return shim.Error(fmt.Sprintf("Error determining composite key for DHP: %s", err))
+			}
 			if err := stub.DelState(dhpCompKey); err != nil {
 				return shim.Error(fmt.Sprintf("Error deleting expired DHP: %s", err))
 			}
@@ -161,8 +165,10 @@ func (c *CovidPassportChaincode) UploadDhp(stub shim.ChaincodeStubInterface, arg
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Error marshaling DHP: %s", err))
 	}
-	// dhpCompKey := stub.CreateCompositeKey("patient~method", []string{string(dhp.Data.Patient), string(dhp.Data.Method)})
-	dhpCompKey := string(dhp.Data.Patient) + string(dhp.Data.Method)
+	dhpCompKey, err := DhpCompositeKey(stub, string(dhp.Data.Patient), string(dhp.Data.Method))
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Error determining composite key for DHP: %s", err))
+	}
 	if err := stub.PutState(dhpCompKey, storeDhp); err != nil {
 		return shim.Error(fmt.Sprintf("Error storing DHP: %s", err))
 	}
@@ -179,45 +185,29 @@ func (c *CovidPassportChaincode) VerifyResult(stub shim.ChaincodeStubInterface, 
 	}
 	patient := args[0]
 	method := args[1]
-	// dhpCompKey := stub.CreateCompositeKey("patient~method", []string{patient, testType})
-	dhpCompKey := patient + method
-	// res, err := stub.GetQueryResult("")
-	dhpB, err := stub.GetState(dhpCompKey)
+
+	// Fetch DHPs
+	dhps, err := FetchDhpsFromLedger(stub, patient, method)
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Error retrieving DHP from ledger: %s", err))
 	}
-	if len(dhpB) == 0 {
-		// DEBUG
-		if true {
-			wstate, err := stub.GetStateByRange("", "")
-			if err != nil {
-				return shim.Error(fmt.Sprintf("Error retrieving chaincode world state: %s", err))
-			}
-			var keys []string
-			defer wstate.Close()
-			for wstate.HasNext() {
-				kv, err := wstate.Next()
-				if err != nil {
-					return shim.Error(fmt.Sprintf("Error accessing chaincode world state: %s", err))
-				}
-				keys = append(keys, kv.Key)
-			}
-			return shim.Error(fmt.Sprintf("DHP for (%s, %s) not found / empty: %s\nWorld State:\n%#v", patient, method, err, keys))
+
+	// Extract test results from not expired DHPs
+	var trs []TestResult
+	now := time.Now()
+	for _, dhp := range dhps {
+		if now.After(dhp.Data.ExpiryDate) {
+			continue
 		}
-		// DEBUG END
-		return shim.Error(fmt.Sprintf("DHP for (%s, %s) not found / empty: %s", patient, method, err))
-	}
-	dhp := Dhp{}
-	if err := json.Unmarshal(dhpB, &dhp); err != nil {
-		return shim.Error(fmt.Sprintf("Error unmarshaling DHP: %s", err))
+
+		trs = append(trs, dhp.Data)
 	}
 
+	// Construct chaincode payload and return results
 	payload, err := json.Marshal(struct {
-		Method TestType `json:"method"`
-		Result bool     `json:"result"`
+		Results []TestResult `json:"results"`
 	}{
-		Method: dhp.Data.Method,
-		Result: dhp.Data.Result,
+		Results: trs,
 	})
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Error constructing response payload: %s", err))

@@ -4,50 +4,43 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"math/rand"
 	"net/http"
 	"time"
 )
 
 var (
-	TestTypes   []string = []string{"PCR", "Antibody"}
-	PatientDids []string = []string{"Agustin", "Elane", "Randal", "Noel", "Shanel", "Piper", "Towanda", "Tameka", "Fidela", "Brittney", "Conception", "Lan", "Fawn", "Garry", "Patrick", "Arnold", "Delcie", "Kim", "Dacia", "Octavio"}
-	TfKeys               = map[string]string{
-		"TF-1-Theresienwiese":  "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgN33Tn1iVORYJKbMlyWK5erHetMRmbNqTbFiAzwE+vA6hRANCAASxhkksdofM3NoKHrZoFl79RMoh+tMjWIiu61mlBTvml5jcdP3X2XHxtYuCXmkjK7dT0fQw72kyojwm6vbd+clC",
-		"TF-2-Sonnenstraße":    "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgRDsFbT75TZ1mP7EIMGGfdt83VmoVyypPZVJkn9QJxWuhRANCAATwTCATI0CP2oMcA0u0swtzFDEmEQIUgd++CTF9JIBKNxqbe92g3X7saHK2puc+OSDKvVsO3TO6o5kNRZ0727o+",
-		"TF-3-DeutschesMuseum": "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg0AQREEYO75R0Dmtp1/DPa3nFWSTk/7QWpLjefY46SR6hRANCAAQTq7kswYZ6q+A6J1rw42YRGC+WACZvoQq9CnuWP3pMA58bcXsLi0eB3BwEdwtTV9zKD6qgCrxM99Qd0qBkNecA",
-	}
+	TestTypes             []string = []string{"PCR", "Antibody"}
+	PatientDids           []string = []string{"Agustin", "Elane", "Randal", "Noel", "Shanel", "Piper", "Towanda", "Tameka", "Fidela", "Brittney", "Conception", "Lan", "Fawn", "Garry", "Patrick", "Arnold", "Delcie", "Kim", "Dacia", "Octavio"}
+	TestFacilityLocations []string = []string{"Theresienwiese", "Sonnenstraße", "DeutschesMuseum"}
 )
 var seeds *Seeds = nil
 
 type Seeds struct {
-	ValidDhps []Dhp `json:"validDHPs"`
+	TestFacilities []SeedTestFacility `json:"testFacilities"`
+	ValidDhps      []Dhp              `json:"validDHPs"`
+}
+
+type SeedTestFacility struct {
+	Id         string `json:"id"`
+	PrivateKey string `json:"privateKey"`
+	PublicKey  string `json:"publicKey"`
 }
 
 type SeedParameters struct {
-	AllValidDhp int `yaml:"allValidDHP,omitempty"`
-}
-
-func SeedRandomValidDhp() (Dhp, error) {
-	if err := loadSeeds(); err != nil {
-		return Dhp{}, err
-	}
-	return seeds.ValidDhps[rand.Intn(len(seeds.ValidDhps))], nil
-}
-
-func SeedFirstValidDhp() (Dhp, error) {
-	if err := loadSeeds(); err != nil {
-		return Dhp{}, err
-	}
-	return seeds.ValidDhps[0], nil
+	NumTestFacilities int `yaml:"numTestFacilities,omitempty"`
+	NumValidDhps      int `yaml:"numValidDHPs,omitempty"`
 }
 
 func loadSeeds() error {
 	if seeds == nil {
 		seeds = &Seeds{}
-		// seedsB, err := ioutil.ReadFile(path.Join("hack", "seed", "seeds.json"))
-		// seedsB, err := ReadFileFromGCS("milan-thesis-21", "seeds.json")
-		seedsB, err := loadFromUrl("https://storage.googleapis.com/milan-thesis-21/covid-passport/seeds.json")
+		var seedsB []byte
+		var err error
+		if Config.Seeds.LoadSeedsFromUrl {
+			seedsB, err = loadFromUrl(Config.Seeds.HostedUrl)
+		} else {
+			seedsB, err = ioutil.ReadFile(Config.Seeds.OutputJsonPath)
+		}
 		if err != nil {
 			return fmt.Errorf("Error loading seeds.json: %w", err)
 		}

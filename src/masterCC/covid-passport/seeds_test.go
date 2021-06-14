@@ -2,15 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"math/rand"
-	"path"
-	"strconv"
 	"testing"
 	"time"
-
-	"gopkg.in/yaml.v2"
 )
 
 func Test_LoadSeeds(t *testing.T) {
@@ -18,76 +11,55 @@ func Test_LoadSeeds(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	if len(seeds.TestFacilities) < 1 {
+		t.Fatalf("No test facilities loaded from seeds: %#v", *seeds)
+	}
+
 	if len(seeds.ValidDhps) < 1 {
 		t.Fatalf("No dhps loaded from seeds: %#v", *seeds)
 	}
 }
 
-func Test_GenerateSeeds(t *testing.T) {
-	if err := generateSeeds(); err != nil {
-		t.Fatal(err)
-	}
-}
-
-func generateSeeds() error {
-	// Seed random gen
-	rand.Seed(time.Now().UnixNano())
-
-	// Read seed params
-	seedParamsB, err := ioutil.ReadFile(path.Join("hack", "seed", "seedParameters.yaml"))
+func Test_DhpSignVerify(t *testing.T) {
+	// TF-1 key
+	tf1PrivKey, err := UnmarshalPrivateKey("MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgrlPDKGaYXHWBGb/3LTuFQ7CCGDlMs0xHr2HgSTN5oe2hRANCAASB1g28k97xrCbwktz8aBMQ05B2U8Lrmp3m9J10EuAroqjibFNlDqG7XX4hPodjRw76MP15p/z3emKoydNnbKL6")
 	if err != nil {
-		return fmt.Errorf("Error reading seedParameters.yaml: %w", err)
+		t.Errorf("Error unmarshaling pregenerated ECDSA keypair for Test Facility TF-1: %s", err)
 	}
-	var seedParams SeedParameters
-	if err := yaml.Unmarshal(seedParamsB, &seedParams); err != nil {
-		return fmt.Errorf("Error unmarshaling seedParameters.yaml: %w", err)
-	}
+	tf1PubKey := tf1PrivKey.PublicKey
 
-	// Initialize Seeds
-	seeds := Seeds{}
-
-	// Generate Valid DHPs
-	for i := 0; i < seedParams.AllValidDhp; i++ {
-		dhp, err := generateValidDhp(i)
-		if err != nil {
-			return fmt.Errorf("Error generating Valid DHP #%d: %w", i, err)
-		}
-		seeds.ValidDhps = append(seeds.ValidDhps, *dhp)
-	}
-
-	// Store seeds.json
-	seedsJson, err := json.Marshal(&seeds)
+	// Test Patient: Milan
+	dhp1, err := generateDhp("001", "TF-1-Theresienwiese", tf1PrivKey, "Milan", "PCR", true, time.Time{}, time.Time{})
 	if err != nil {
-		return fmt.Errorf("Error marshaling generated seeds: %w", err)
-	}
-	if err := ioutil.WriteFile(path.Join("hack", "seed", "seeds.json"), seedsJson, 0644); err != nil {
-		return fmt.Errorf("Error writing seeds.json: %w", err)
+		t.Errorf("Error generating dhp1: %s", err)
 	}
 
-	return nil
-}
+	// DEBUG
+	t.Logf("Date: %s", dhp1.Data.Date)
+	t.Logf("ExpiryDate: %s", dhp1.Data.ExpiryDate)
 
-func generateValidDhp(ix int) (*Dhp, error) {
-	var tfId string
-	r := rand.Intn(len(TfKeys))
-	for k := range TfKeys {
-		if r == 0 {
-			tfId = k
-		}
-		r--
-	}
-	tfKey, err := UnmarshalPrivateKey(TfKeys[tfId])
+	// Simulate PubKey Put/Set on channel
+	tmp1, err := MarshalPublicKey(&tf1PubKey)
 	if err != nil {
-		return nil, fmt.Errorf("Error unmarshaling private key: %w", err)
+		t.Errorf("Error marshaling public key: %s", err)
 	}
-	patientDid := PatientDids[rand.Intn(len(PatientDids))]
+	tmp2 := []byte(tmp1)
+	tmp3 := string(tmp2)
+	issCrt, err := UnmarshalPublicKey(tmp3)
+	if err != nil {
+		t.Errorf("Error unmarshaling public key: %s", err)
+	}
 
-	// fmt.Printf("PatientDID: %s", patientDid)
-	// fmt.Printf("SHA256(PatientDID: %s", (ccrypto.Hash([]byte(patientDid))))
+	// Validate signature
+	data, err := json.Marshal(&dhp1.Data)
+	if err != nil {
+		t.Errorf("Error marshaling TestResult data inside DHP: %s", err)
+	}
+	if !ValidateSignature(data, dhp1.Signature, issCrt) {
+		t.Errorf("Signature validation failed! \n Issuer: %s \n Signature: %#v \n TestResult: %#v", *issCrt, dhp1.Signature, data)
+	}
 
-	return GenerateDhp(strconv.Itoa(ix), tfId, tfKey, patientDid,
-		TestTypes[rand.Intn(len(TestTypes))], rand.Intn(1) == 1,
-		time.Now().AddDate(0, 0, -1).Truncate(24*time.Hour),
-		time.Now().AddDate(0, 0, 2).Truncate(24*time.Hour),
-	)
+	// DEBUG
+	t.Logf("Issuer: %s \n Signature: %#v \n TestResult: %#v", *issCrt, dhp1.Signature, data)
+
 }
