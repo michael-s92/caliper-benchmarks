@@ -1,16 +1,16 @@
 /*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.hyperledger.fabric.samples.fabcar;
 
@@ -25,8 +25,8 @@ import org.hyperledger.fabric.contract.annotation.Default;
 import org.hyperledger.fabric.contract.annotation.Info;
 import org.hyperledger.fabric.contract.annotation.License;
 import org.hyperledger.fabric.contract.annotation.Transaction;
-import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.hyperledger.fabric.shim.ChaincodeException;
+import org.hyperledger.fabric.shim.ChaincodeStub;
 
 import com.owlike.genson.Genson;
 import org.hyperledger.fabric.shim.ledger.CompositeKey;
@@ -54,20 +54,22 @@ public final class CovidPassport implements ContractInterface {
     }
 
     @Transaction()
-    public void initLedger(final Context ctx) throws Exception {
-    	throw new ChaincodeException("this is very bad");
-
-        /*ChaincodeStub stub = ctx.getStub();
-        Seeds seeds = Seeds.loadSeeds();
-        if (seeds == null) {
-            throw new Exception("seeds is null");
+    public void initLedger(final Context ctx) throws ChaincodeException {
+        try {
+            ChaincodeStub stub = ctx.getStub();
+            Seeds seeds = Seeds.loadSeeds();
+            if (seeds == null) {
+                throw new ChaincodeException("seeds is null");
+            }
+            for (SeedTestFacility testFacility : seeds.getTestFacilities()) {
+                stub.putStringState(testFacility.getId(), testFacility.getPublicKey());
+            }
+            for (Dhp validDhp : seeds.getValidDhps()) {
+                stub.putState(validDhp.getId(), genson.serializeBytes(validDhp));
+            }
+        } catch (Exception e) {
+            throw new ChaincodeException(e);
         }
-        for (SeedTestFacility testFacility : seeds.getTestFacilities()) {
-            stub.putStringState(testFacility.getId(), testFacility.getPublicKey());
-        }
-        for (Dhp validDhp : seeds.getValidDhps()) {
-            stub.putState(validDhp.getId(), genson.serializeBytes(validDhp));
-        }*/
     }
 
     @Transaction()
