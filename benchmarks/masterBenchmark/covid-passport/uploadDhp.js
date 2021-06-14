@@ -23,7 +23,7 @@ class uploadDhp {
         // PurgeExpiredDhps()
 	    let args = {
                 chaincodeFunction: 'uploadDhp',
-                chaincodeArguments: [dhp]
+                chaincodeArguments: [JSON.stringify(dhp)]
             };
 
 	    return args;
