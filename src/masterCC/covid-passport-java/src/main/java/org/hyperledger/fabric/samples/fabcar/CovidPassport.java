@@ -53,9 +53,12 @@ public final class CovidPassport implements ContractInterface {
     }
 
     @Transaction()
-    public void initLedger(final Context ctx) {
+    public void initLedger(final Context ctx) throws Exception {
         ChaincodeStub stub = ctx.getStub();
         Seeds seeds = Seeds.loadSeeds();
+        if (seeds == null) {
+            throw new Exception("seeds is null");
+        }
         for (SeedTestFacility testFacility : seeds.getTestFacilities()) {
             stub.putStringState(testFacility.getId(), testFacility.getPublicKey());
         }
