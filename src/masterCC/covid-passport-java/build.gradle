@@ -71,13 +71,6 @@ jacocoTestCoverageVerification {
             ])
         })
     }
-    violationRules {
-        rule {
-            limit {
-                minimum = 0.7
-            }
-        }
-    }
     
     finalizedBy jacocoTestReport
 }
