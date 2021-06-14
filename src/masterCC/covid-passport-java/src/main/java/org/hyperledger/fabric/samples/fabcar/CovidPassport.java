@@ -26,6 +26,7 @@ import org.hyperledger.fabric.contract.annotation.Info;
 import org.hyperledger.fabric.contract.annotation.License;
 import org.hyperledger.fabric.contract.annotation.Transaction;
 import org.hyperledger.fabric.shim.ChaincodeStub;
+import org.hyperledger.fabric.shim.ChaincodeException;
 
 import com.owlike.genson.Genson;
 import org.hyperledger.fabric.shim.ledger.CompositeKey;
@@ -54,9 +55,9 @@ public final class CovidPassport implements ContractInterface {
 
     @Transaction()
     public void initLedger(final Context ctx) throws Exception {
-    	throw new java.lang.RuntimeException("this is very bad");
+    	throw new ChaincodeException("this is very bad");
 
-        ChaincodeStub stub = ctx.getStub();
+        /*ChaincodeStub stub = ctx.getStub();
         Seeds seeds = Seeds.loadSeeds();
         if (seeds == null) {
             throw new Exception("seeds is null");
@@ -66,7 +67,7 @@ public final class CovidPassport implements ContractInterface {
         }
         for (Dhp validDhp : seeds.getValidDhps()) {
             stub.putState(validDhp.getId(), genson.serializeBytes(validDhp));
-        }
+        }*/
     }
 
     @Transaction()
