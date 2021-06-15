@@ -73,8 +73,10 @@ public final class CovidPassport implements ContractInterface {
                 stub.putStringState(testFacility.getId(), testFacility.getPublicKey());
             }
             for (Dhp validDhp : seeds.getValidDhps()) {
-                stub.putState(validDhp.getId(), genson.serializeBytes(validDhp));
+                CompositeKey dhpCompKey = stub.createCompositeKey("patient~method", validDhp.getData().getPatient(), validDhp.getData().getMethod());
+                stub.putState(dhpCompKey.toString(), genson.serializeBytes(validDhp));
             }
+
         } catch (ChaincodeException e) {
             throw e;
         } catch (Exception e) {
