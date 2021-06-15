@@ -8,6 +8,7 @@
     "deck": "0.0.4",
     "fabric-contract-api": "1.4.1",
     "fabric-shim": "1.4.1",
+    "node-fetch": "^2.6.1",
     "pick-random-weighted": "^1.2.3",
     "random-picker": "1.0.0",
     "read-yaml": "1.1.0",
