@@ -65,6 +65,10 @@ public final class CovidPassport implements ContractInterface {
             if (seeds == null) {
                 throw new ChaincodeException("seeds is null");
             }
+            if (seeds.getTestFacilities().length == 0 || seeds.getValidDhps().length == 0) {
+                throw new ChaincodeException(String.format("missing seeds.\nNum. Test Facilities: %d\nNum valid DHPs: %d\n",
+                        seeds.getTestFacilities().length, seeds.getValidDhps().length));
+            }
             for (SeedTestFacility testFacility : seeds.getTestFacilities()) {
                 stub.putStringState(testFacility.getId(), testFacility.getPublicKey());
             }
