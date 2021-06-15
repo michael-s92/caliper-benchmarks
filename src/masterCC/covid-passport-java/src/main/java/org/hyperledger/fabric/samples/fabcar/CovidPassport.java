@@ -74,7 +74,7 @@ public final class CovidPassport implements ContractInterface {
             }
             for (Dhp validDhp : seeds.getValidDhps()) {
                 CompositeKey dhpCompKey = stub.createCompositeKey("patient~method", validDhp.getData().getPatient(), validDhp.getData().getMethod());
-                stub.putState(dhpCompKey.toString(), genson.serializeBytes(validDhp));
+                stub.putStringState(dhpCompKey.toString(), genson.serialize(validDhp));
             }
 
         } catch (ChaincodeException e) {
@@ -116,8 +116,8 @@ public final class CovidPassport implements ContractInterface {
             CompositeKey dhpCompKey;
             ChaincodeStub stub = ctx.getStub();
             dhpCompKey = stub.createCompositeKey("patient~method", patient, method);
-            byte[] dhpB = stub.getState(dhpCompKey.toString());
-            if (dhpB == null || dhpB.length == 0) {
+            String dhpB = stub.getStringState(dhpCompKey.toString());
+            if (dhpB == null || dhpB.length() == 0) {
                 // DEBUG
                 QueryResultsIterator<KeyValue> wstate = stub.getStateByRange("", "");
                 List<String > keys = new ArrayList<String>();
