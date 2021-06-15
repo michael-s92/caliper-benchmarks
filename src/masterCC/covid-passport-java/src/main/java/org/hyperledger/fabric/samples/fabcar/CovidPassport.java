@@ -129,7 +129,7 @@ public final class CovidPassport implements ContractInterface {
                     }
                     wstateStr += "\n### WORLD STATE END ###\n";
 
-                    throw new ChaincodeException(String.format("DHP for key id '%s' does not exist.\n%s", dhpCompKey.toString(), wstateStr));
+                    throw new ChaincodeException(String.format("DHP for key id '%s' does not exist. \n World State Size: %d\n%s", dhpCompKey.toString(), keys.size(), wstateStr));
                 }
                 finally {
                     wstate.close();
