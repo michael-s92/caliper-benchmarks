@@ -31,7 +31,6 @@ import com.owlike.genson.Genson;
 import org.hyperledger.fabric.shim.ledger.CompositeKey;
 import org.hyperledger.fabric.shim.ledger.KeyValue;
 import org.hyperledger.fabric.shim.ledger.QueryResultsIterator;
-import org.joda.time.DateTime;
 
 @Contract(name = "CovidPassportJava", info = @Info(title = "Covid passport contract", description = "The hyperlegendary covid passport", version = "0.0.1-SNAPSHOT", license = @License(name = "Apache 2.0 License")))
 @Default
