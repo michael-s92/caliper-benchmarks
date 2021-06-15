@@ -72,26 +72,12 @@ channels:
         eventSource: true
 
     chaincodes:
-#    - id: notarization-v2
-#      version: v1
-#      language: node
-#      path: src/masterCC/notarization-v2
-#      metadataPath: src/masterCC/notarization-v2/metadata
-#    - id: iotsupplychain
-#      version: v1
-#      language: node
-#      path: src/masterCC/iotsupplychain/node
-#      metadataPath: src/masterCC/iotsupplychain/node/metadata
-#    - id: eureka
-#      version: v1
-#      language: node
-#      path: src/masterCC/eureka
-#      metadataPath: src/masterCC/eureka/metadata
-    - id: zk-voting
+    - id: notarization-v2
       version: v1
       language: node
-      path: src/masterCC/zk-voting
-      metadataPath: src/masterCC/zk-voting/metadata
+      path: src/masterCC/notarization-v2
+      metadataPath: src/masterCC/notarization-v2/metadata
+
 
 organizations:
   Org1:
