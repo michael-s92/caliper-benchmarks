@@ -202,7 +202,6 @@ public final class CovidPassport implements ContractInterface {
 
     @Transaction()
     public void benchmarkPurgeExpiredDhps(final Context ctx) {
-            purgeExpiredDhps(ctx);
-        }
+        purgeExpiredDhps(ctx);
     }
 }
