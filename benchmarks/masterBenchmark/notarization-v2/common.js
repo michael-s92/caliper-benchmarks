@@ -52,9 +52,16 @@ module.exports.run = function () {
     //let uniformPick = deck.pick(testCasePermuation);
     //console.info('--------------------------- TRANSACTION TO BE INVOKED: ' + ALLTESTCASE[uniformPick]);
 
+
     let args = ALLTESTCASE[testPick].get();
 
-    return bc.invokeSmartContract(contx, 'notarization-v2', 'v1', args, 120);
+    if(testPick===3){
+        return bc.bcObj.querySmartContract(contx, 'notarization-v2', 'v1', args, 120);
+
+    }else{
+        return bc.invokeSmartContract(contx, 'notarization-v2', 'v1', args, 120);
+
+    }
     /*
     let txstatus = bc.invokeSmartContract(contx, 'notarization-v2', 'v1', args, 120);
     //console.info('TRANSACTION STATUS');
