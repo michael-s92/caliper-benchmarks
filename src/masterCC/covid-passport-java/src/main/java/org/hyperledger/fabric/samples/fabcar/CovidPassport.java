@@ -74,6 +74,7 @@ public final class CovidPassport implements ContractInterface {
 
     @Transaction()
     public boolean uploadDhp(final Context ctx, final String encodedDhp) {
+	try{
         ChaincodeStub stub = ctx.getStub();
         Dhp dhp = genson.deserialize(encodedDhp, Dhp.class);
         byte[] issCrtB = stub.getState(dhp.getData().getTestFacilityId());
@@ -84,10 +85,15 @@ public final class CovidPassport implements ContractInterface {
         CompositeKey dhpCompKey = stub.createCompositeKey("patient~method", dhp.getData().getPatient(), dhp.getData().getMethod());
         stub.putState(dhpCompKey.toString(), storeDhp);
         return true;
+ } catch (Exception e) {
+            throw new ChaincodeException(e);
+        }
+
     }
 
     @Transaction()
-    public TestResult verifyResult(final Context ctx, final String patient, final String method) {
+    public TestResult verifyResult(final Context ctx, final String patient, final String method) {	
+	try{
         ChaincodeStub stub = ctx.getStub();
         CompositeKey dhpCompKey = stub.createCompositeKey("patient~method", patient, method);
         byte[] dhpB = stub.getState(dhpCompKey.toString());
@@ -96,5 +102,10 @@ public final class CovidPassport implements ContractInterface {
             return null;
         }
         return dhp.getData();
+
+} catch (Exception e) {
+            throw new ChaincodeException(e);
+        }
+
     }
 }
