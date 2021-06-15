@@ -58,7 +58,7 @@ public final class CovidPassport implements ContractInterface {
     public void initLedger(final Context ctx) throws ChaincodeException {
         try {
             ChaincodeStub stub = ctx.getStub();
-            Seeds seeds = Seeds.loadSeeds();
+            Seeds seeds = Seeds.get();
             if (seeds == null) {
                 throw new ChaincodeException("seeds is null");
             }
@@ -68,7 +68,7 @@ public final class CovidPassport implements ContractInterface {
             for (Dhp validDhp : seeds.getValidDhps()) {
                 stub.putState(validDhp.getId(), genson.serializeBytes(validDhp));
             }
-        } catch (ChaincodeException e ) {
+        } catch (ChaincodeException e) {
             throw e;
         } catch (Exception e) {
             throw new ChaincodeException(e.getStackTrace().toString());
@@ -88,7 +88,7 @@ public final class CovidPassport implements ContractInterface {
             CompositeKey dhpCompKey = stub.createCompositeKey("patient~method", dhp.getData().getPatient(), dhp.getData().getMethod());
             stub.putState(dhpCompKey.toString(), storeDhp);
             return true;
-        } catch (ChaincodeException e ) {
+        } catch (ChaincodeException e) {
             throw e;
         } catch (Exception e) {
             throw new ChaincodeException(e.getStackTrace().toString());
@@ -96,18 +96,18 @@ public final class CovidPassport implements ContractInterface {
     }
 
     @Transaction()
-    public TestResult verifyResult(final Context ctx, final String patient, final String method) {	
+    public TestResult verifyResult(final Context ctx, final String patient, final String method) {
         try {
             ChaincodeStub stub = ctx.getStub();
             CompositeKey dhpCompKey = stub.createCompositeKey("patient~method", patient, method);
             byte[] dhpB = stub.getState(dhpCompKey.toString());
             Dhp dhp = genson.deserialize(dhpB, Dhp.class);
-            if(dhp.getData().getExpiryDate().isBeforeNow()) {
+            if (dhp.getData().getExpiryDate().isBeforeNow()) {
                 return null;
             }
             return dhp.getData();
 
-        } catch (ChaincodeException e ) {
+        } catch (ChaincodeException e) {
             throw e;
         } catch (Exception e) {
             throw new ChaincodeException(e.getStackTrace().toString());
@@ -126,7 +126,7 @@ public final class CovidPassport implements ContractInterface {
                     try {
                         genson.deserialize(kv.getValue(), Dhp.class);
 
-                    // Not a DHP
+                        // Not a DHP
                     } catch (JsonBindingException e) {
                         continue;
                     }
@@ -148,7 +148,44 @@ public final class CovidPassport implements ContractInterface {
             } finally {
                 wstate.close();
             }
-        } catch (ChaincodeException e ) {
+        } catch (ChaincodeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ChaincodeException(e.getStackTrace().toString());
+        }
+    }
+
+    @Transaction()
+    public void benchmarkUploadDhp(final Context ctx, int ix) {
+        try {
+            Dhp[] seedDhps = Seeds.get().getValidDhps();
+            Dhp dhp = seedDhps[ix % seedDhps.length];
+            uploadDhp(ctx, genson.serialize(dhp));
+        } catch (ChaincodeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ChaincodeException(e.getStackTrace().toString());
+        }
+    }
+
+    @Transaction()
+    public void benchmarkVerifyResult(final Context ctx, int ix) {
+        try {
+            Dhp[] seedDhps = Seeds.get().getValidDhps();
+            Dhp dhp = seedDhps[ix % seedDhps.length];
+            verifyResult(ctx, dhp.getData().getPatient(), dhp.getData().getMethod());
+        } catch (ChaincodeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ChaincodeException(e.getStackTrace().toString());
+        }
+    }
+
+    @Transaction()
+    public void benchmarkPurgeExpiredDhps(final Context ctx) {
+        try {
+            purgeExpiredDhps(ctx);
+        } catch (ChaincodeException e) {
             throw e;
         } catch (Exception e) {
             throw new ChaincodeException(e.getStackTrace().toString());
