@@ -206,6 +206,11 @@ public final class CovidPassport implements ContractInterface {
     }
 
     @Transaction()
+    public void PurgeExpiredDhps(final Context ctx) {
+        purgeExpiredDhps(ctx);
+    }
+
+    @Transaction()
     public void benchmarkUploadDhp(final Context ctx, int ix) {
         try {
             Dhp[] seedDhps = Seeds.get().getValidDhps();
