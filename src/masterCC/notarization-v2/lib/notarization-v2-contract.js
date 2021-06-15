@@ -237,7 +237,7 @@ class NotarizationV2Contract extends Contract {
             };
     
             let response = await ctx.stub.getQueryResultWithPagination(JSON.stringify(readersQueryString), 10);
-            const {resultIterator, metadata} = response;
+            const {resultIterator, md} = response;
             let readers = await Helper.getAllResults(resultIterator);
 
             let metadata = doc.getMetadata();
