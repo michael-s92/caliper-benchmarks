@@ -14,6 +14,8 @@
 
 package org.hyperledger.fabric.samples.fabcar;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.security.PublicKey;
 
 import com.owlike.genson.JsonBindingException;
@@ -70,7 +72,10 @@ public final class CovidPassport implements ContractInterface {
         } catch (ChaincodeException e) {
             throw e;
         } catch (Exception e) {
-            throw new ChaincodeException(e.getStackTrace().toString());
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            throw new ChaincodeException(sw.toString());
         }
     }
 
@@ -90,7 +95,10 @@ public final class CovidPassport implements ContractInterface {
         } catch (ChaincodeException e) {
             throw e;
         } catch (Exception e) {
-            throw new ChaincodeException(e.getStackTrace().toString());
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            throw new ChaincodeException(sw.toString());
         }
     }
 
@@ -109,7 +117,10 @@ public final class CovidPassport implements ContractInterface {
         } catch (ChaincodeException e) {
             throw e;
         } catch (Exception e) {
-            throw new ChaincodeException(e.getStackTrace().toString());
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            throw new ChaincodeException(sw.toString());
         }
     }
 
@@ -150,7 +161,10 @@ public final class CovidPassport implements ContractInterface {
         } catch (ChaincodeException e) {
             throw e;
         } catch (Exception e) {
-            throw new ChaincodeException(e.getStackTrace().toString());
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            throw new ChaincodeException(sw.toString());
         }
     }
 
@@ -163,7 +177,10 @@ public final class CovidPassport implements ContractInterface {
         } catch (ChaincodeException e) {
             throw e;
         } catch (Exception e) {
-            throw new ChaincodeException(e.getStackTrace().toString());
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            throw new ChaincodeException(sw.toString());
         }
     }
 
@@ -176,18 +193,16 @@ public final class CovidPassport implements ContractInterface {
         } catch (ChaincodeException e) {
             throw e;
         } catch (Exception e) {
-            throw new ChaincodeException(e.getStackTrace().toString());
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            throw new ChaincodeException(sw.toString());
         }
     }
 
     @Transaction()
     public void benchmarkPurgeExpiredDhps(final Context ctx) {
-        try {
             purgeExpiredDhps(ctx);
-        } catch (ChaincodeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ChaincodeException(e.getStackTrace().toString());
         }
     }
 }
