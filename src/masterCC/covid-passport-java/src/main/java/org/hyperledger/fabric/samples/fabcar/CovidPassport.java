@@ -103,17 +103,23 @@ public final class CovidPassport implements ContractInterface {
     }
 
     @Transaction()
-    public TestResult verifyResult(final Context ctx, final String patient, final String method) {
+    public TestResult[] verifyResult(final Context ctx, final String patient, final String method) {
         try {
+            CompositeKey dhpCompKey;
             ChaincodeStub stub = ctx.getStub();
-            CompositeKey dhpCompKey = stub.createCompositeKey("patient~method", patient, method);
+            dhpCompKey = stub.createCompositeKey("patient~method", patient, method);
             byte[] dhpB = stub.getState(dhpCompKey.toString());
+            if (dhpB == null || dhpB.length == 0) {
+                throw new ChaincodeException(String.format("DHP for key id '%s' does not exist", dhpCompKey.toString()));
+            }
             Dhp dhp = genson.deserialize(dhpB, Dhp.class);
+            if (dhp == null) {
+                throw new ChaincodeException("DHP retrieved from ledger is null after deserialization");
+            }
             if (dhp.getData().getExpiryDate().isBeforeNow()) {
                 return null;
             }
-            return dhp.getData();
-
+            return new TestResult[]{dhp.getData()};
         } catch (ChaincodeException e) {
             throw e;
         } catch (Exception e) {
