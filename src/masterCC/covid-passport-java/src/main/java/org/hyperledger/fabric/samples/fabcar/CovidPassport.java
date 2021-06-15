@@ -17,6 +17,8 @@ package org.hyperledger.fabric.samples.fabcar;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.owlike.genson.JsonBindingException;
 import org.hyperledger.fabric.contract.Context;
@@ -110,7 +112,30 @@ public final class CovidPassport implements ContractInterface {
             dhpCompKey = stub.createCompositeKey("patient~method", patient, method);
             byte[] dhpB = stub.getState(dhpCompKey.toString());
             if (dhpB == null || dhpB.length == 0) {
-                throw new ChaincodeException(String.format("DHP for key id '%s' does not exist", dhpCompKey.toString()));
+                // DEBUG
+                QueryResultsIterator<KeyValue> wstate = stub.getStateByRange("", "");
+                List<String > keys = new ArrayList<String>();
+                try {
+                    while (wstate.iterator().hasNext()) {
+                        KeyValue kv = wstate.iterator().next();
+                        if (!keys.add(kv.getKey())) {
+                            throw new ChaincodeException("error recording global state key");
+                        }
+                    }
+
+                    String wstateStr = "### WORLD STATE ###";
+                    for (String x : keys) {
+                        wstateStr += "\n" + x;
+                    }
+                    wstateStr += "\n### WORLD STATE END ###\n";
+
+                    throw new ChaincodeException(String.format("DHP for key id '%s' does not exist.\n%s", dhpCompKey.toString(), wstateStr));
+                }
+                finally {
+                    wstate.close();
+                }
+                // END DEBUG
+                // throw new ChaincodeException(String.format("DHP for key id '%s' does not exist", dhpCompKey.toString()));
             }
             Dhp dhp = genson.deserialize(dhpB, Dhp.class);
             if (dhp == null) {
