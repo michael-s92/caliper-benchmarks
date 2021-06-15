@@ -15,9 +15,8 @@
 package org.hyperledger.fabric.samples.fabcar;
 
 import java.security.PublicKey;
-import java.time.LocalDateTime;
-import java.util.Date;
 
+import com.owlike.genson.JsonBindingException;
 import org.hyperledger.fabric.contract.Context;
 import org.hyperledger.fabric.contract.ContractInterface;
 import org.hyperledger.fabric.contract.annotation.Contract;
@@ -30,6 +29,8 @@ import org.hyperledger.fabric.shim.ChaincodeStub;
 
 import com.owlike.genson.Genson;
 import org.hyperledger.fabric.shim.ledger.CompositeKey;
+import org.hyperledger.fabric.shim.ledger.KeyValue;
+import org.hyperledger.fabric.shim.ledger.QueryResultsIterator;
 import org.joda.time.DateTime;
 
 @Contract(name = "CovidPassportJava", info = @Info(title = "Covid passport contract", description = "The hyperlegendary covid passport", version = "0.0.1-SNAPSHOT", license = @License(name = "Apache 2.0 License")))
@@ -67,45 +68,90 @@ public final class CovidPassport implements ContractInterface {
             for (Dhp validDhp : seeds.getValidDhps()) {
                 stub.putState(validDhp.getId(), genson.serializeBytes(validDhp));
             }
+        } catch (ChaincodeException e ) {
+            throw e;
         } catch (Exception e) {
-            throw new ChaincodeException(e);
+            throw new ChaincodeException(e.getStackTrace().toString());
         }
     }
 
     @Transaction()
     public boolean uploadDhp(final Context ctx, final String encodedDhp) {
-	try{
-        ChaincodeStub stub = ctx.getStub();
-        Dhp dhp = genson.deserialize(encodedDhp, Dhp.class);
-        byte[] issCrtB = stub.getState(dhp.getData().getTestFacilityId());
-        PublicKey issuerCert = Crypto.UnmarshalPublicKey(issCrtB);
-        byte[] data = genson.serializeBytes(dhp.getData());
-        Crypto.validateSignature(data, dhp.getSignature().getR(), dhp.getSignature().getS(), issuerCert);
-        byte[] storeDhp = genson.serializeBytes(dhp);
-        CompositeKey dhpCompKey = stub.createCompositeKey("patient~method", dhp.getData().getPatient(), dhp.getData().getMethod());
-        stub.putState(dhpCompKey.toString(), storeDhp);
-        return true;
- } catch (Exception e) {
-            throw new ChaincodeException(e);
+        try {
+            ChaincodeStub stub = ctx.getStub();
+            Dhp dhp = genson.deserialize(encodedDhp, Dhp.class);
+            byte[] issCrtB = stub.getState(dhp.getData().getTestFacilityId());
+            PublicKey issuerCert = Crypto.UnmarshalPublicKey(issCrtB);
+            byte[] data = genson.serializeBytes(dhp.getData());
+            Crypto.validateSignature(data, dhp.getSignature().getR(), dhp.getSignature().getS(), issuerCert);
+            byte[] storeDhp = genson.serializeBytes(dhp);
+            CompositeKey dhpCompKey = stub.createCompositeKey("patient~method", dhp.getData().getPatient(), dhp.getData().getMethod());
+            stub.putState(dhpCompKey.toString(), storeDhp);
+            return true;
+        } catch (ChaincodeException e ) {
+            throw e;
+        } catch (Exception e) {
+            throw new ChaincodeException(e.getStackTrace().toString());
         }
-
     }
 
     @Transaction()
     public TestResult verifyResult(final Context ctx, final String patient, final String method) {	
-	try{
-        ChaincodeStub stub = ctx.getStub();
-        CompositeKey dhpCompKey = stub.createCompositeKey("patient~method", patient, method);
-        byte[] dhpB = stub.getState(dhpCompKey.toString());
-        Dhp dhp = genson.deserialize(dhpB, Dhp.class);
-        if(dhp.getData().getExpiryDate().isBeforeNow()) {
-            return null;
-        }
-        return dhp.getData();
+        try {
+            ChaincodeStub stub = ctx.getStub();
+            CompositeKey dhpCompKey = stub.createCompositeKey("patient~method", patient, method);
+            byte[] dhpB = stub.getState(dhpCompKey.toString());
+            Dhp dhp = genson.deserialize(dhpB, Dhp.class);
+            if(dhp.getData().getExpiryDate().isBeforeNow()) {
+                return null;
+            }
+            return dhp.getData();
 
-} catch (Exception e) {
-            throw new ChaincodeException(e);
+        } catch (ChaincodeException e ) {
+            throw e;
+        } catch (Exception e) {
+            throw new ChaincodeException(e.getStackTrace().toString());
         }
+    }
 
+    @Transaction()
+    public void purgeExpiredDhps(final Context ctx) {
+        try {
+            ChaincodeStub stub = ctx.getStub();
+            QueryResultsIterator<KeyValue> wstate = stub.getStateByRange("", "");
+            try {
+                while (wstate.iterator().hasNext()) {
+                    KeyValue kv = wstate.iterator().next();
+                    Dhp dhp = null;
+                    try {
+                        genson.deserialize(kv.getValue(), Dhp.class);
+
+                    // Not a DHP
+                    } catch (JsonBindingException e) {
+                        continue;
+                    }
+
+                    if (dhp == null) {
+                        throw new ChaincodeException("dhp is null");
+                    }
+
+                    // Not expired
+                    if (dhp.getData().getExpiryDate().isAfterNow()) {
+                        continue;
+                    }
+
+                    // Delete expired DHP
+                    CompositeKey dhpCompKey = stub.createCompositeKey("patient~method", dhp.getData().getPatient(), dhp.getData().getMethod());
+                    stub.delState(dhpCompKey.toString());
+
+                }
+            } finally {
+                wstate.close();
+            }
+        } catch (ChaincodeException e ) {
+            throw e;
+        } catch (Exception e) {
+            throw new ChaincodeException(e.getStackTrace().toString());
+        }
     }
 }
