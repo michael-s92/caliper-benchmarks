@@ -224,10 +224,22 @@ class NotarizationV2Contract extends Contract {
         let hashedKey = sha512(studentKey);
         if (hashedKey === doc.studentHash){
             // get the list of all reader
-
-            let docReaderResultsIterator = await ctx.stub.getStateByPartialCompositeKey(documentReaderIndexName, [documentKey]);
-            let readers = await Helper.getAllResults(docReaderResultsIterator);
+            //COMPOSITE KEY SEARCH
+            //let docReaderResultsIterator = await ctx.stub.getStateByPartialCompositeKey(documentReaderIndexName, [documentKey]);
+            //let readers = await Helper.getAllResults(docReaderResultsIterator);
             
+            //PAGINATION + QUERY
+
+            let readersQueryString = {};
+            readersQueryString.selector = {
+                docType: Reader.getDocType(),
+                documentKey: documentKey
+            };
+    
+            let response = await ctx.stub.getQueryResultWithPagination(JSON.stringify(readersQueryString), 10);
+            const {resultIterator, metadata} = response;
+            let readers = await Helper.getAllResults(resultIterator);
+
             let metadata = doc.getMetadata();
             metadata.readers = readers;
 
